@@ -2,23 +2,19 @@ import * as geo from "./geo-infor.js";
 
 const point_template_tree = {
   title: "{Name}",
-  content: "Cây này ở <b>{Location}</b>.",
-};
-const point_template_light = {
-  title: "{Name}",
-  content: "Bóng đèn này ở <b>{Location}</b>.",
-};
-const point_template_chair = {
-  title: "{Name}",
-  content: "Cái ghế này ở <b>{Location}</b>.",
+  content: "{Location}</b>.",
 };
 const point_template_area = {
   title: "{Name}",
-  content: "Khu vực này ở <b>{Location}</b>.",
+  content: "{Location}</b>.",
 };
 const point_template_university = {
   title: "{Name}",
-  content: "Trường ở <b>{Location}</b>.",
+  content: "{Location}</b>.",
+};
+
+const commonCnf = {
+  lineColor: [255, 255, 255],
 };
 
 const polygons = [
@@ -59,7 +55,7 @@ const polygons = [
     Location: "Phường Bến Nghé",
     symbol: {
       type: "simple-fill",
-      color: [204, 153, 0, 0.4],
+      color: [145, 145, 145, 0.4],
       outline: {
         color: [255, 255, 255],
         width: 1,
@@ -225,6 +221,29 @@ const points = [
   },
 ];
 
+const transactionPoints = [];
+const addTransactionBankGeos = () => {
+  geo.transactionBankGeos.forEach((i, index) => {
+    transactionPoints.push({
+      type: "point",
+      latitude: i[0],
+      longitude: i[1],
+      Name: `Phòng Giao Dịch ${index}`,
+      Location: `Phòng Giao Dịch ${index}`,
+      symbol: {
+        type: "simple-marker",
+        color: [255, 0, 238],
+        outline: {
+          color: [255, 0, 238],
+          width: 2,
+        },
+      },
+      popupTemplate: point_template_tree,
+    });
+  });
+};
+addTransactionBankGeos();
+
 const lines = [
   {
     type: "polyline",
@@ -238,61 +257,7 @@ const lines = [
     Location: "Tp. Hồ Chí Minh",
     popupTemplate: point_template_area,
   },
-  {
-    type: "polyline",
-    paths: geo.streets.NguyenHueBouleconstd,
-    symbol: {
-      type: "simple-line",
-      color: [0, 30, 255], // orange
-      width: 2,
-    },
-    Name: "Đại lộ Nguyễn Huệ",
-    Location: "Đại lộ Nguyễn Huệ",
-  },
-  {
-    type: "polyline",
-    paths: geo.streets.DongKhoiStreet,
-    symbol: {
-      type: "simple-line",
-      color: [0, 30, 255], // orange
-      width: 2,
-    },
-    Name: "Đường Ðồng Khởi",
-    Location: "Đường Ðồng Khởi",
-  },
-  {
-    type: "polyline",
-    paths: geo.streets.NguyenThiMinhKhai,
-    symbol: {
-      type: "simple-line",
-      color: [0, 30, 255], // orange
-      width: 2,
-    },
-    Name: "Nguyễn Thị Minh Khai",
-    Location: "Nguyễn Thị Minh Khai",
-  },
-  {
-    type: "polyline",
-    paths: geo.streets.Pasteur,
-    symbol: {
-      type: "simple-line",
-      color: [0, 30, 255], // orange
-      width: 2,
-    },
-    Name: "Đường Pasteur",
-    Location: "Đường Pasteur",
-  },
-  {
-    type: "polyline",
-    paths: geo.streets.HamNghi,
-    symbol: {
-      type: "simple-line",
-      color: [0, 30, 255], // orange
-      width: 2,
-    },
-    Name: "Đại lộ Hàm Nghi",
-    Location: "Đại lộ Hàm Nghi",
-  },
+  ...geo.streets,
 ];
 
 const jsondata = {
@@ -306,14 +271,18 @@ require([
   "esri/views/MapView",
   "esri/Graphic",
   "esri/layers/GraphicsLayer",
-], function (Map, MapView, Graphic, GraphicsLayer) {
+  "esri/symbols/PictureMarkerSymbol",
+], function (Map, MapView, Graphic, GraphicsLayer, PictureMarkerSymbol) {
+  // Create map
   const map = new Map({
     basemap: "topo-vector",
   });
+
   map.on("load", function () {
     map.graphics.enableMouseEvents();
   });
 
+  // Init Map View
   const view = new MapView({
     container: "viewDiv",
     map: map,
@@ -323,6 +292,7 @@ require([
       color: "blue",
     },
   });
+
   const createGraphic = function (data) {
     return new Graphic({
       geometry: data,
@@ -331,15 +301,44 @@ require([
       popupTemplate: data.popupTemplate,
     });
   };
+
+  // Add Icon to map
+  const bankIcon = new PictureMarkerSymbol({
+    url: "../assets/bank.png", // URL to your icon image
+    width: "28px",
+    height: "28px",
+  });
+  const iconGraphic = function (data) {
+    return new Graphic({
+      geometry: data,
+      symbol: bankIcon,
+      attributes: data,
+      popupTemplate: data.popupTemplate,
+    });
+  };
+
   const graphicsLayer = new GraphicsLayer();
-  jsondata.points.forEach(function (data) {
+
+  jsondata.polygons.forEach(function (data) {
     graphicsLayer.add(createGraphic(data));
   });
   jsondata.lines.forEach(function (data) {
     graphicsLayer.add(createGraphic(data));
   });
-  jsondata.polygons.forEach(function (data) {
+  jsondata.points.forEach(function (data) {
     graphicsLayer.add(createGraphic(data));
   });
+  transactionPoints.forEach(function (point) {
+    graphicsLayer.add(iconGraphic(point));
+  });
+
   map.add(graphicsLayer);
+
+  view
+    .when(() => {
+      console.log("Map and view are loaded.");
+    })
+    .catch((error) => {
+      console.error("Error loading map or view:", error);
+    });
 });
