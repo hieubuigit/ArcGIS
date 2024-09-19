@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '../user-authentication/login/login.component';
 import { ForgotPasswordComponent } from '../user-authentication/forgot-password/forgot-password.component';
+import { GisMapComponent } from '../gis-map/gis-map.component';
 
 const routes: Routes = [
   {
@@ -19,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: 'guest-map',
-    component: ForgotPasswordComponent,
+    component: GisMapComponent,
   },
 ];
 

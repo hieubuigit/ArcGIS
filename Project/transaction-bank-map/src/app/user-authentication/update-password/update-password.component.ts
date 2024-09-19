@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-update-password',
   standalone: true,
   imports: [
     MatInputModule,
@@ -17,23 +17,21 @@ import { Router, RouterLink } from '@angular/router';
     MatIconModule,
     RouterLink,
   ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  templateUrl: './update-password.component.html',
+  styleUrl: './update-password.component.scss',
 })
-export class LoginComponent {
+export class UpdatePasswordComponent {
   form = this._formBuilder.group({
-    userName: ['', Validators.required],
     password: ['', [Validators.required]],
+    repeatPassword: ['', [Validators.required]],
   });
 
   constructor(private _formBuilder: FormBuilder, private router: Router) {
-
+    this.router.events.subscribe((event) => {
+      console.log(event); // Log router events for debugging
+    });
   }
 
-  onLogin() {
-    const formData = this.form.getRawValue();
-    if ((formData.userName === '123', formData.password === '123')) {
-      this.router.navigate(['/guest-map']);
-    }
+  onChangePassword() {
   }
 }
