@@ -1,6 +1,9 @@
 export namespace GisMap {
-  export enum PopUpType {
-    Add,
-    Update,
+  export enum Status {
+    BaoTri,
+    HoatDong,
+    DongCua,
   }
 }
+
+

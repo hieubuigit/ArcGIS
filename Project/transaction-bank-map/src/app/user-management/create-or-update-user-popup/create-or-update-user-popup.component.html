@@ -1,0 +1,70 @@
+<div mat-dialog-title class="text-lg font-bold">
+  @if (popupType === 0) { Tạo PGD } @else { Chỉnh sửa PGD }
+</div>
+
+<div mat-dialog-content>
+  <div class="flex flex-col items-center p-5">
+    <form class="flex flex-col w-full" [formGroup]="form">
+      <mat-form-field class="flex justify-center">
+        <mat-label>Mã User</mat-label>
+        <input matInput formControlName="userId" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>User Name</mat-label>
+        <input matInput formControlName="userName" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Tên đầy đủ</mat-label>
+        <input matInput formControlName="fullName" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>SDT</mat-label>
+        <input matInput formControlName="phone" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Giới tính</mat-label>
+        <input matInput formControlName="gender" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Địa chỉ</mat-label>
+        <input matInput formControlName="address" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Vai trò</mat-label>
+        <input matInput formControlName="role" type="text" />
+      </mat-form-field>
+    </form>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <div class="flex justify-end p-2">
+    <button
+      mat-stroked-button
+      mat-dialog-close
+      (click)="onCancel()"
+      class="mx-2"
+    >
+      Huỷ
+    </button>
+    <button mat-flat-button (click)="onSave()">
+      @if(popupType === 0) { Lưu } @else { Cập Nhật }
+    </button>
+  </div>
+</div>

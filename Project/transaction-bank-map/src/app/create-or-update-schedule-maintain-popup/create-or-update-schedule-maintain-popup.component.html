@@ -1,0 +1,68 @@
+<div mat-dialog-title class="text-lg font-bold">
+  @if (popupType === 0) { Lên lịch bảo trì } @else { Chỉnh sửa lịch bảo trì }
+</div>
+
+<div mat-dialog-content>
+  <div class="flex flex-col items-center p-5">
+    <form class="flex flex-col w-full" [formGroup]="form">
+      <mat-form-field class="flex justify-center">
+        <mat-label>Mã PGD</mat-label>
+        <input matInput formControlName="transOfficeCode" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Tên Lịch</mat-label>
+        <input matInput formControlName="calendarName" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Mô tả</mat-label>
+        <input matInput formControlName="description" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Chi phí</mat-label>
+        <input matInput formControlName="cost" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Ngày bắt đầu</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="startDate" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Ngày kết thúc</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="endDate" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+    </form>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <div class="flex justify-end p-2">
+    <button
+      mat-stroked-button
+      mat-dialog-close
+      (click)="onCancel()"
+      class="mx-2"
+    >
+      Huỷ
+    </button>
+    <button mat-flat-button (click)="onSave()">
+      @if(popupType === 0) { Thêm } @else { Cập Nhật }
+    </button>
+  </div>
+</div>

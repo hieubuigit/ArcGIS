@@ -27,21 +27,21 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>Phường</mat-label>
-        <select matNativeControl formControlName="ward">
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="mercedes">Mercedes</option>
-          <option value="audi">Audi</option>
-        </select>
+        <mat-select matNativeControl formControlName="ward">
+          @for (w of wards(); track $index) {
+          <mat-option value="w.value">{{ w.name }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
-       <mat-form-field class="flex justify-center">
-        <mat-label>Trạng thái</mat-label>
-        <mat-radio-group aria-label="Select an option" formControlName="status">
-          <mat-radio-button value="1">Option 1</mat-radio-button>
-          <mat-radio-button value="2">Option 2</mat-radio-button>
+      <div>
+        <mat-label class="text-base mr-4">Trạng thái</mat-label>
+        <mat-radio-group aria-label="Select an option">
+          @for (s of status; track $index) {
+          <mat-radio-button value="s.value">{{ s.name }}</mat-radio-button>
+          }
         </mat-radio-group>
-      </mat-form-field>
+      </div>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Thời gian hoạt động</mat-label>
@@ -68,9 +68,16 @@
 
 <div mat-dialog-actions>
   <div class="flex justify-end p-2">
-  <button mat-stroked-button mat-dialog-close (click)="onCancel()" class="mx-2">Huỷ</button>
-  <button mat-flat-button (click)="onSave()">
-    @if(popupType === 0) { Lưu } @else { Cập Nhật }
-  </button>
+    <button
+      mat-stroked-button
+      mat-dialog-close
+      (click)="onCancel()"
+      class="mx-2"
+    >
+      Huỷ
+    </button>
+    <button mat-flat-button (click)="onSave()">
+      @if(popupType === 0) { Lưu } @else { Cập Nhật }
+    </button>
   </div>
 </div>

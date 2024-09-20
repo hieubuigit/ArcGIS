@@ -1,13 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
-import { MatRadioGroup, MatRadioModule } from '@angular/material/radio';
-import {MatSelectModule} from '@angular/material/select';
-import { GisMap } from '../gis-map.model';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { GisMap} from '../gis-map.model';
 import {
   MatDialogActions,
   MatDialogClose,
@@ -15,20 +15,24 @@ import {
   MatDialogModule,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { MatOptionModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
+import { PopUpType, SelectItem } from '../../share/common';
 
 @Component({
   selector: 'app-create-or-update-bank-branch-popup',
   standalone: true,
   imports: [
+    CommonModule,
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatOptionModule,
     MatButtonModule,
     MatIconModule,
     RouterLink,
     MatRadioModule,
-    MatRadioGroup,
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
@@ -39,7 +43,7 @@ import {
   styleUrl: './create-or-update-bank-branch-popup.component.scss',
 })
 export class CreateOrUpdateBankBranchPopupComponent {
-  @Input() popupType!: GisMap.PopUpType;
+  @Input() popupType!: PopUpType;
 
   form = this._formBuilder.group({
     transOfficeCode: ['', Validators.required],
@@ -54,9 +58,21 @@ export class CreateOrUpdateBankBranchPopupComponent {
     long: ['', [Validators.required]],
   });
 
+  status = [
+    { name: 'Bảo trì', value: GisMap.Status.BaoTri },
+    { name: 'Hoạt động', value: GisMap.Status.HoatDong },
+    { name: 'Đóng cửa', value: GisMap.Status.DongCua },
+  ];
+
+  wards = signal<SelectItem<number>[]>([]);
+
   constructor(private _formBuilder: FormBuilder, private router: Router) {}
 
   onCancel() {}
 
   onSave() {}
+
+  getWards() {
+
+  }
 }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
@@ -32,7 +32,7 @@ export class GisMapComponent implements OnInit {
   private view!: MapView;
   private dialogRef!: MatDialogRef<CloseTransactionPopupComponent>;
 
-  constructor(private _dialog: MatDialog) {}
+  constructor(private _dialog: MatDialog, private _router: Router) {}
 
   ngOnInit(): void {
     this.initializeMap();
@@ -106,14 +106,11 @@ export class GisMapComponent implements OnInit {
     });
   }
 
-maintainList() {
-}
+  maintainList() {
+    this._router.navigate(['/transaction-list'])
+  }
 
-onTicket() {
+  onTicket() {}
 
-}
-
-onUser() {
-
-}
+  onUser() {}
 }
