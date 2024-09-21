@@ -12,6 +12,8 @@ import Color from '@arcgis/core/Color';
 import { CloseTransactionPopupComponent } from './close-transaction-popup/close-transaction-popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CreateOrUpdateBankBranchPopupComponent } from './create-or-update-bank-branch-popup/create-or-update-bank-branch-popup.component';
+import { PopUpType } from '../share/common';
+import { UserType } from '../user-management/user-management.model';
 
 @Component({
   selector: 'app-guest-map',
@@ -25,10 +27,10 @@ import { CreateOrUpdateBankBranchPopupComponent } from './create-or-update-bank-
     MatButtonModule,
   ],
   templateUrl: './gis-map.component.html',
-  styleUrl: './gis-map.component.scss',
 })
 export class GisMapComponent implements OnInit {
-  @Input() isAdmin = true;
+  userType: UserType = UserType.Admin;
+  userTypes = UserType;
   private view!: MapView;
   private dialogRef!: MatDialogRef<CloseTransactionPopupComponent>;
 
@@ -103,14 +105,27 @@ export class GisMapComponent implements OnInit {
   onAddTrans(): void {
     this._dialog.open(CreateOrUpdateBankBranchPopupComponent, {
       width: '700px',
+      data: { popupType: PopUpType.Add },
     });
   }
 
   maintainList() {
-    this._router.navigate(['/transaction-list'])
+    this._router.navigate(['/maintain-transaction-list']);
   }
 
-  onTicket() {}
+  onTransaction() {
+    this._router.navigate(['/transaction-management']);
+  }
 
-  onUser() {}
+  onUser() {
+    console.log('user clicked');
+  }
+
+  onUserManagement() {
+    this._router.navigate(['user-management']);
+  }
+
+  onAdmin() {
+    console.log('Admin page');
+  }
 }

@@ -1,5 +1,5 @@
 <div mat-dialog-title class="text-lg font-bold">
-  @if (popupType === 0) { Tạo PGD } @else { Chỉnh sửa PGD }
+  @if (popupType === popupTypes.Add) { Thêm mới User } @else { Chỉnh sửa User }
 </div>
 
 <div mat-dialog-content>
@@ -17,7 +17,7 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>Password</mat-label>
-        <input matInput formControlName="password" type="text" />
+        <input matInput formControlName="password" type="password" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
@@ -27,28 +27,36 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>SDT</mat-label>
-        <input matInput formControlName="phone" type="text" />
+        <input matInput formControlName="phone" type="tel" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="text" />
+        <input matInput formControlName="email" type="email" />
       </mat-form-field>
 
-      <mat-form-field class="flex justify-center">
-        <mat-label>Giới tính</mat-label>
-        <input matInput formControlName="gender" type="text" />
-      </mat-form-field>
+      <div>
+        <mat-label class="text-base mr-4">Giới tính</mat-label>
+        <mat-radio-group formControlName="gender">
+          @for (s of genderItems; track $index) {
+          <mat-radio-button [value]="s.value">{{ s.name }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Địa chỉ</mat-label>
         <input matInput formControlName="address" type="text" />
       </mat-form-field>
 
-      <mat-form-field class="flex justify-center">
-        <mat-label>Vai trò</mat-label>
-        <input matInput formControlName="role" type="text" />
-      </mat-form-field>
+      <div>
+        <mat-label class="text-base mr-4" >Loại tài khoản</mat-label>
+        <mat-radio-group formControlName="userType">
+          @for (i of userTypeItems; track $index) {
+          <mat-radio-button [value]="i.value">{{ i.name }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
     </form>
   </div>
 </div>
@@ -58,13 +66,12 @@
     <button
       mat-stroked-button
       mat-dialog-close
-      (click)="onCancel()"
       class="mx-2"
     >
       Huỷ
     </button>
     <button mat-flat-button (click)="onSave()">
-      @if(popupType === 0) { Lưu } @else { Cập Nhật }
+      @if(popupType === popupTypes.Add) { Lưu } @else { Cập Nhật }
     </button>
   </div>
 </div>

@@ -1,0 +1,93 @@
+<div mat-dialog-title class="text-lg font-bold">
+  @if (popupType === popupTypes.Add) { Lên lịch bảo trì } @else { Chỉnh sửa lịch
+  bảo trì }
+</div>
+
+<div mat-dialog-content>
+  <div class="flex flex-col items-center p-5">
+    <form class="flex flex-col w-full" [formGroup]="form">
+      <mat-form-field class="flex justify-center">
+        <mat-label>Mã PGD</mat-label>
+        <input matInput formControlName="transOfficeCode" type="text" class="" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Tên Lịch</mat-label>
+        <input matInput formControlName="calendarName" type="text" />
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Mô tả</mat-label>
+        <textarea matInput placeholder="Nhập mô tả" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
+        <mat-label>Chi phí</mat-label>
+        <input matInput formControlName="cost" type="number" />
+      </mat-form-field>
+
+      <!-- Start Time -->
+      <div class="container flex justify-between mb-5">
+        <mat-form-field appearance="fill" class="basis-2/5 mr-2">
+          <mat-label>Thời gian bắt đầu</mat-label>
+          <input
+            matInput
+            placeholder="HH:MM"
+            formControlName="startTime"
+            pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+          />
+          <mat-hint>HH:MM (24-hour format)</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="flex justify-center basis-3/5">
+          <mat-label>Ngày bắt đầu</mat-label>
+          <input
+            matInput
+            [matDatepicker]="startDate"
+            formControlName="startDate"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="startDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #startDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- End Time -->
+      <div class="container flex justify-between">
+        <mat-form-field appearance="fill" class="basis-2/5 mr-2">
+          <mat-label>Thời gian kết thúc</mat-label>
+          <input
+            matInput
+            placeholder="HH:MM"
+            formControlName="endTime"
+            pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+          />
+          <mat-hint>HH:MM (24-hour format)</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="flex justify-center basis-3/5">
+          <mat-label>Ngày kết thúc</mat-label>
+          <input matInput [matDatepicker]="endDate" formControlName="endDate" />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="endDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #endDate></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <div class="flex justify-end p-2">
+    <button mat-stroked-button mat-dialog-close class="mx-2">Huỷ</button>
+    <button mat-flat-button (click)="onSave()">
+      @if(popupType === popupTypes.Add) { Thêm } @else { Cập Nhật }
+    </button>
+  </div>
+</div>

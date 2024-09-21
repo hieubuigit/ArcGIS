@@ -3,7 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '../user-authentication/login/login.component';
 import { ForgotPasswordComponent } from '../user-authentication/forgot-password/forgot-password.component';
 import { GisMapComponent } from '../gis-map/gis-map.component';
-import { TransactionListComponent } from '../transaction-list/transaction-list.component';
+import { MaintainTransactionListComponent } from '../maintain-transaction-list/maintain-transaction-list.component';
+import { UserManagementComponent } from '../user-management/user-management.component';
+import { TransactionManagementComponent } from '../transaction-management/transaction-management.component';
 
 const routes: Routes = [
   {
@@ -24,8 +26,16 @@ const routes: Routes = [
     component: GisMapComponent,
   },
   {
-    path: 'transaction-list',
-    component: TransactionListComponent,
+    path: 'maintain-transaction-list',
+    component: MaintainTransactionListComponent,
+  },
+ {
+    path: 'user-management',
+    component: UserManagementComponent,
+  },
+ {
+    path: 'transaction-management',
+    component: TransactionManagementComponent,
   },
 ];
 

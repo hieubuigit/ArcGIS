@@ -1,5 +1,5 @@
 <div mat-dialog-title class="text-lg font-bold">
-  @if (popupType === 0) { Tạo PGD } @else { Chỉnh sửa PGD }
+  @if (popupType === popupTypes.Add) { Tạo PGD } @else { Chỉnh sửa PGD }
 </div>
 
 <div mat-dialog-content>
@@ -22,14 +22,14 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>Mô tả</mat-label>
-        <input matInput formControlName="ward" type="text" />
+        <textarea matInput formControlName="ward" type="text" ></textarea>
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Phường</mat-label>
         <mat-select matNativeControl formControlName="ward">
           @for (w of wards(); track $index) {
-          <mat-option value="w.value">{{ w.name }}</mat-option>
+          <mat-option [value]="w.value">{{ w.name }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -38,7 +38,7 @@
         <mat-label class="text-base mr-4">Trạng thái</mat-label>
         <mat-radio-group aria-label="Select an option">
           @for (s of status; track $index) {
-          <mat-radio-button value="s.value">{{ s.name }}</mat-radio-button>
+          <mat-radio-button [value]="s.value">{{ s.name }}</mat-radio-button>
           }
         </mat-radio-group>
       </div>
@@ -50,17 +50,17 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>Chi phí đầu tư</mat-label>
-        <input matInput formControlName="investmentCost" type="text" />
+        <input matInput formControlName="investmentCost" type="number" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Tọa độ X</mat-label>
-        <input matInput formControlName="lat" type="text" />
+        <input matInput formControlName="lat" type="number" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Tọa độ Y</mat-label>
-        <input matInput formControlName="long" type="text" />
+        <input matInput formControlName="long" type="number" />
       </mat-form-field>
     </form>
   </div>
@@ -77,7 +77,7 @@
       Huỷ
     </button>
     <button mat-flat-button (click)="onSave()">
-      @if(popupType === 0) { Lưu } @else { Cập Nhật }
+      @if(popupType === popupTypes.Add) { Lưu } @else { Cập Nhật }
     </button>
   </div>
 </div>

@@ -1,13 +1,27 @@
-<div class="flex justify-around items-center my-4">
-  <div class="text-lg">Quản Lý PGD Ngân Hàng VietcomBank</div>
-  <button mat-flat-button type="button" (click)="onAddTrans()" >Thêm PGD</button>
-  <button mat-flat-button type="button" (click)="maintainList()">Danh sách bảo trì</button>
-  <button mat-flat-button type="button" (click)="onTicket()">Tickets</button>
-  <div class="example-button-container">
-    <button mat-flat-button extended (click)="onUser()">
-      <mat-icon>account_circle</mat-icon>
-      User
-    </button>
+<div class="flex justify-between items-center my-4 px-4">
+  <div class="text-2xl font-bold">Quản Lý PGD Ngân Hàng VietcomBank</div>
+  <div class="buttons flex justify-around">
+  <button class="mx-1" mat-flat-button type="button" (click)="onAddTrans()">Thêm PGD</button>
+  <button class="mx-1" mat-flat-button type="button" (click)="maintainList()">
+    Danh sách bảo trì
+  </button>
+  <button class="mx-1" mat-flat-button type="button" (click)="onTransaction()">Quản Lý Giao Dịch</button>
+
+  @switch (userType) { @case (userTypes.User) {
+  <button class="mx-1" mat-stroked-button extended (click)="onUser()">
+    <mat-icon>account_circle</mat-icon>
+    User
+  </button>
+  } @case (userTypes.Admin) {
+  <button class="mx-1" mat-flat-button extended (click)="onUserManagement()">
+    Quản lý User
+  </button>
+  <button class="mx-1" mat-stroked-button extended (click)="onAdmin()">
+    <mat-icon>account_circle</mat-icon>
+    Admin
+  </button>
+  } }
+
   </div>
 </div>
 

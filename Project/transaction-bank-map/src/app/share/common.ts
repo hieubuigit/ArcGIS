@@ -6,4 +6,12 @@ export interface SelectItem<T> {
 export enum PopUpType {
   Add,
   Update,
+  Delete,
+}
+
+export interface Paging {
+  pageIndex: number,
+  pageSize: number,
+  keySort?: string,
+  sortDesc?: boolean,
 }
