@@ -293,9 +293,9 @@ lines = [
 //     basemap: "topo-vector",
 //   });
 
-//   map.on("load", function () {
-//     map.graphics.enableMouseEvents();
-//   });
+  // map.on("load", function () {
+  //   map.graphics.enableMouseEvents();
+  // });
 
 //   // Init Map View
 //   const view = new MapView({
@@ -357,6 +357,5 @@ lines = [
 //       console.error("Error loading map or view:", error);
 //     });
 // });
-
 
 }

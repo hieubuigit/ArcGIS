@@ -75,27 +75,31 @@ export class UserManagementComponent {
     });
   }
 
-  onEdit() {
+  onEdit(el: User) {
     const dialogRef = this._dialog.open(CreateOrUpdateUserPopupComponent, {
       width: '700px',
-      data: { popupType: PopUpType.Update },
+      data: { popupType: PopUpType.Update, rowData: el },
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      console.log('user update: ', res);
     });
   }
 
-  onDelete() {
+  onDelete(el: User) {
     const dialogRef = this._dialog.open(ConfirmComponent, {
       width: '700px',
       data: {
-        title: `Bạn có chắc chắn muốn xóa User ${0} không? `,
+        title: `Bạn có chắc chắn muốn xóa User ${el.userId} không? `,
         content:
           'Hành động này không thể hoàn tác. Use sẽ bị xóa ra khỏi hệ thống vĩnh viễn.',
         popupType: PopUpType.Delete,
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('User data received:', result);
+    dialogRef.afterClosed().subscribe((isAccept) => {
+      if (isAccept) {
+        console.log('Is Accept:', isAccept);
       }
     });
   }

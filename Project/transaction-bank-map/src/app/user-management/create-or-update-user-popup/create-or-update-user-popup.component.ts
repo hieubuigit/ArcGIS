@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -9,6 +9,7 @@ import {
   MatDialogClose,
   MatDialogContent,
   MatDialogModule,
+  MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,6 +22,7 @@ import { PopUpType } from '../../share/common';
 import {
   Gender,
   GenderItems,
+  User,
   UserType,
   UserTypeItems,
 } from '../user-management.model';
@@ -68,16 +70,34 @@ export class CreateOrUpdateUserPopupComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<CreateOrUpdateUserPopupComponent>,
   ) {}
 
   ngOnInit(): void {
-    if(this.data) {
+    if (this.data) {
       this.popupType = this.data.popupType;
+      if (this.data.popupType === PopUpType.Update) {
+        this.mapFormData(this.data.rowData);
+      }
     }
   }
 
   onSave() {
-    console.log('?', this.form.getRawValue());
+    this.dialogRef.close(this.form.getRawValue());
+  }
+
+  mapFormData(rowData: User) {
+    this.form.setValue({
+      userId: rowData.userId,
+      email: rowData.email,
+      userName: rowData.userName,
+      password: rowData.password,
+      fullName: rowData.fullName,
+      phone: rowData.phone,
+      gender: rowData.gender,
+      address: rowData.address,
+      userType: rowData.userType,
+    });
   }
 }

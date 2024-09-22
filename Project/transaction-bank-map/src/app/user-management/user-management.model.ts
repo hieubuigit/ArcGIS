@@ -2,7 +2,7 @@ import { SelectItem } from "../share/common";
 
 export interface User {
   id: number,
-  code: string,
+  userId: string,
   email: string,
   fullName: string,
   userName: string,
@@ -13,6 +13,7 @@ export interface User {
   phone: string,
   gender: Gender,
   address: string,
+  password: string,
 }
 
 export enum UserType {
@@ -51,7 +52,7 @@ export const UserStatusItems : SelectItem<UserStatus>[] = [
 export const sampleUsers: User[] = [
   {
     id: 1,
-    code: 'USR001',
+    userId: 'USR001',
     email: 'alice@example.com',
     fullName: 'Alice Smith',
     userName: 'alice_smith',
@@ -62,10 +63,11 @@ export const sampleUsers: User[] = [
     phone: '123-456-7890',
     gender: Gender.Female,
     address: '123 Main St, Anytown, USA',
+    password: '123456789',
   },
   {
     id: 2,
-    code: 'USR002',
+    userId: 'USR002',
     email: 'bob@example.com',
     fullName: 'Bob Johnson',
     userName: 'bob_johnson',
@@ -76,10 +78,11 @@ export const sampleUsers: User[] = [
     phone: '234-567-8901',
     gender: Gender.Male,
     address: '456 Elm St, Othertown, USA',
+    password: '123456789',
   },
   {
     id: 3,
-    code: 'USR003',
+    userId: 'USR003',
     email: 'charlie@example.com',
     fullName: 'Charlie Brown',
     userName: 'charlie_brown',
@@ -90,10 +93,11 @@ export const sampleUsers: User[] = [
     phone: '345-678-9012',
     gender: Gender.Male,
     address: '789 Oak St, Sometown, USA',
+    password: '123456789',
   },
   {
     id: 4,
-    code: 'USR004',
+    userId: 'USR004',
     email: 'david@example.com',
     fullName: 'David Wilson',
     userName: 'david_wilson',
@@ -104,10 +108,11 @@ export const sampleUsers: User[] = [
     phone: '456-789-0123',
     gender: Gender.Male,
     address: '101 Pine St, Anycity, USA',
+    password: '123456789',
   },
   {
     id: 5,
-    code: 'USR005',
+    userId: 'USR005',
     email: 'eve@example.com',
     fullName: 'Eve Davis',
     userName: 'eve_davis',
@@ -118,5 +123,6 @@ export const sampleUsers: User[] = [
     phone: '567-890-1234',
     gender: Gender.Male,
     address: '202 Maple St, Yourtown, USA',
+    password: '123456789',
   },
 ];

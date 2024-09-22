@@ -1920,7 +1920,7 @@ export const streets = [
           'old_name:fr': 'Rue de la Croix Rouge',
           'old_name:fr:-1865': 'Rue no. 25',
           'old_name:fr:1865-1955': 'Rue Chasseloup-Laubat',
-          'old_name:fr:1955-1975": "Rue de la Croix Rouge",
+          // 'old_name:fr:1955-1975": "Rue de la Croix Rouge",
           "old_name:id": "Jalan Hong Thap Tu (Palang Merah)",
           "old_name:id:-1865": "Jalan no. 25",
           "old_name:id:1865-1955": "Jalan Chasseloup-Laubat",
@@ -6283,7 +6283,7 @@ export const streets = [
 
 // Handle data
 type GeoItem = {name: string, coordinates: any};
-export const streetsGeo: GeoItem[];
+export const streetsGeo: GeoItem[] = [];
 streets.forEach((i) => {
   const item: GeoItem = { name: i.features[0].properties.name, coordinates: []};
   i.features.forEach((x) => {

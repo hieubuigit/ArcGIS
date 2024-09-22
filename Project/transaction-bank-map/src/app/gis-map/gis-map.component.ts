@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
@@ -9,11 +9,16 @@ import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import { MatButtonModule } from '@angular/material/button';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import Color from '@arcgis/core/Color';
-import { CloseTransactionPopupComponent } from './close-transaction-popup/close-transaction-popup.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CreateOrUpdateBankBranchPopupComponent } from './create-or-update-bank-branch-popup/create-or-update-bank-branch-popup.component';
 import { PopUpType } from '../share/common';
 import { UserType } from '../user-management/user-management.model';
+import { MatMenuModule } from '@angular/material/menu';
+import { ConfirmComponent } from '../share/confirm.component';
+import { UpdatePasswordComponent } from '../user-authentication/update-password/update-password.component';
+import Graphic from '@arcgis/core/Graphic';
+import { GisMapService } from './gis-map.service';
+
 
 @Component({
   selector: 'app-guest-map',
@@ -25,16 +30,22 @@ import { UserType } from '../user-management/user-management.model';
     RouterLink,
     MatIconModule,
     MatButtonModule,
+    MatMenuModule,
   ],
+  providers: [GisMapService],
   templateUrl: './gis-map.component.html',
 })
 export class GisMapComponent implements OnInit {
   userType: UserType = UserType.Admin;
   userTypes = UserType;
   private view!: MapView;
-  private dialogRef!: MatDialogRef<CloseTransactionPopupComponent>;
+  private dialogRef!: MatDialogRef<ConfirmComponent>;
 
-  constructor(private _dialog: MatDialog, private _router: Router) {}
+  constructor(
+    private _dialog: MatDialog,
+    private _router: Router,
+    private _gisMapSvc: GisMapService
+  ) {}
 
   ngOnInit(): void {
     this.initializeMap();
@@ -57,48 +68,50 @@ export class GisMapComponent implements OnInit {
       },
     });
 
-    // const createGraphic = new Graphic({
-    //   geometry: {},
-    //   symbol: {},
-    //   attributes: {},
-    //   popupTemplate: {},
-    // });
-
-    // Add Icon to map
-    const bankIcon = new PictureMarkerSymbol({
-      url: '../assets/bank.png', // URL to your icon image
-      width: '28px',
-      height: '28px',
+    const graphicsLayer = new GraphicsLayer();
+    this._gisMapSvc.getPolygons().forEach((data) => {
+      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
     });
 
+    this._gisMapSvc.getLines().forEach((data) => {
+      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    });
+
+    this._gisMapSvc.getPoints().forEach((data) => {
+      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    });
+
+    // Add Icon to map
     // const iconGraphic = new Graphic({
     //   geometry: {},
-    //   symbol: bankIcon,
+    //   symbol: new PictureMarkerSymbol({
+    //     url: 'assets/bank.png',
+    //     width: '28px',
+    //     height: '28px',
+    //   }),
     //   attributes: {},
-    //   popupTemplate: {},
+    //   popupTemplate: {
+    //     title: 'Bank Information',
+    //     content: 'This is a bank info',
+    //   },
     // });
 
-    const graphicsLayer = new GraphicsLayer();
-
-    //   jsondata.polygons.forEach(function (data) {
-    //     graphicsLayer.add(createGraphic(data));
-    //   });
-    //   jsondata.lines.forEach(function (data) {
-    //     graphicsLayer.add(createGraphic(data));
-    //   });
-    //   jsondata.points.forEach(function (data) {
-    //     graphicsLayer.add(createGraphic(data));
-    //   });
-    //   transactionPoints.forEach(function (point) {
-    //     graphicsLayer.add(iconGraphic(point));
-    //   });
+    // this._gisMapSvc.addTransactionBankGeos().forEach((point) => {
+    //   graphicsLayer.add(iconGraphic);
+    // });
 
     map.add(graphicsLayer);
   }
 
-  onOpenAddTransaction(): void {
-    this._dialog.open(CloseTransactionPopupComponent, {
+  onCloseTransaction(): void {
+    this._dialog.open(ConfirmComponent, {
       width: '700px',
+      data: {
+        title: `Bạn có chắc chắn muốn phòng giao dịch này không? `,
+        content:
+          'Hành động này không thể hoàn tác.PGD sẽ bị xóa ra khỏi hệ thống vĩnh viễn.',
+        popupType: PopUpType.Delete,
+      },
     });
   }
 
@@ -125,7 +138,29 @@ export class GisMapComponent implements OnInit {
     this._router.navigate(['user-management']);
   }
 
-  onAdmin() {
-    console.log('Admin page');
+  onChangePass() {
+    const dialogRef = this._dialog.open(UpdatePasswordComponent, {
+      width: '700px',
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((resp) => {
+      console.log(resp);
+    });
+  }
+
+  onLogOut() {
+    const dialogRef = this._dialog.open(ConfirmComponent, {
+      width: '700px',
+      data: {
+        title: `Bạn có muốn đăng xuất?`,
+        content: '',
+        popupType: PopUpType.Logout,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((resp) => {
+      console.log(resp);
+    });
   }
 }

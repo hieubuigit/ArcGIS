@@ -1,10 +1,10 @@
-import { Component, Inject, Input, OnInit, signal } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { GisMap } from '../gis-map.model';
@@ -14,12 +14,12 @@ import {
   MatDialogClose,
   MatDialogContent,
   MatDialogModule,
+  MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatOptionModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 import { PopUpType, SelectItem } from '../../share/common';
-import { UserType } from '../../user-management/user-management.model';
 
 @Component({
   selector: 'app-create-or-update-bank-branch-popup',
@@ -59,23 +59,24 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
   popupType: PopUpType = PopUpType.Add;
   popupTypes = PopUpType;
   status = GisMap.StatusList;
-
   wards = signal<SelectItem<number>[]>([]);
 
   constructor(
     private _formBuilder: FormBuilder,
-    private router: Router,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<CreateOrUpdateBankBranchPopupComponent>,
   ) {}
+
   ngOnInit(): void {
     if (this.data) {
       this.popupType = this.data.popupType;
     }
   }
 
-  onCancel() {}
+  onSave() {
+    this.dialogRef.close(this.form.getRawValue());
+  }
 
-  onSave() {}
-
-  getWards() {}
+  fetchWardData() {
+  }
 }

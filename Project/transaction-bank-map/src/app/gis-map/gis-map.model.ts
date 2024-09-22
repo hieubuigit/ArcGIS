@@ -10,6 +10,12 @@ export namespace GisMap {
     { name: 'Hoạt động', value: GisMap.Status.HoatDong },
     { name: 'Đóng cửa', value: GisMap.Status.DongCua },
   ];
+
+  export interface GraphicModel {
+
+  }
+
 }
+
 
 

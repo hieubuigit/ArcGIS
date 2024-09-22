@@ -1,27 +1,50 @@
 <div class="flex justify-between items-center my-4 px-4">
   <div class="text-2xl font-bold">Quản Lý PGD Ngân Hàng VietcomBank</div>
   <div class="buttons flex justify-around">
-  <button class="mx-1" mat-flat-button type="button" (click)="onAddTrans()">Thêm PGD</button>
-  <button class="mx-1" mat-flat-button type="button" (click)="maintainList()">
-    Danh sách bảo trì
-  </button>
-  <button class="mx-1" mat-flat-button type="button" (click)="onTransaction()">Quản Lý Giao Dịch</button>
+    <button class="mx-1" mat-flat-button type="button" (click)="onAddTrans()">
+      Thêm PGD
+    </button>
+    <button class="mx-1" mat-flat-button type="button" (click)="maintainList()">
+      Danh sách bảo trì
+    </button>
+    <button
+      class="mx-1"
+      mat-flat-button
+      type="button"
+      (click)="onTransaction()"
+    >
+      Quản Lý Giao Dịch
+    </button>
 
-  @switch (userType) { @case (userTypes.User) {
-  <button class="mx-1" mat-stroked-button extended (click)="onUser()">
-    <mat-icon>account_circle</mat-icon>
-    User
-  </button>
-  } @case (userTypes.Admin) {
-  <button class="mx-1" mat-flat-button extended (click)="onUserManagement()">
-    Quản lý User
-  </button>
-  <button class="mx-1" mat-stroked-button extended (click)="onAdmin()">
-    <mat-icon>account_circle</mat-icon>
-    Admin
-  </button>
-  } }
+    @switch (userType) { @case (userTypes.User) {
+    <button
+      class="mx-1"
+      mat-stroked-button
+      [matMenuTriggerFor]="userMenu"
+      extended
+    >
+      <mat-icon>account_circle</mat-icon>
+      User
+    </button>
+    } @case (userTypes.Admin) {
+    <button class="mx-1" mat-flat-button extended (click)="onUserManagement()">
+      Quản lý User
+    </button>
+    <button
+      class="mx-1"
+      mat-stroked-button
+      extended
+      [matMenuTriggerFor]="userMenu"
+    >
+      <mat-icon>account_circle</mat-icon>
+      Admin
+    </button>
+    } }
 
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="onChangePass()">Thay đổi mật khẩu</button>
+      <button mat-menu-item (click)="onLogOut()">Đăng xuất</button>
+    </mat-menu>
   </div>
 </div>
 

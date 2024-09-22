@@ -19,7 +19,6 @@ import { Router, RouterLink } from '@angular/router';
   ],
 
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent {
   constructor(private _formBuilder: FormBuilder, private router: Router) {

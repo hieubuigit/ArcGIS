@@ -36,7 +36,7 @@
 
       <div>
         <mat-label class="text-base mr-4">Trạng thái</mat-label>
-        <mat-radio-group aria-label="Select an option">
+        <mat-radio-group>
           @for (s of status; track $index) {
           <mat-radio-button [value]="s.value">{{ s.name }}</mat-radio-button>
           }
@@ -71,7 +71,6 @@
     <button
       mat-stroked-button
       mat-dialog-close
-      (click)="onCancel()"
       class="mx-2"
     >
       Huỷ

@@ -7,6 +7,7 @@ export enum PopUpType {
   Add,
   Update,
   Delete,
+  Logout,
 }
 
 export interface Paging {

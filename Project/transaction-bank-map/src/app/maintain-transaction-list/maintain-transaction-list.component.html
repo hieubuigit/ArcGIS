@@ -1,18 +1,22 @@
-<div class="flex items-center m-2">
-  <div class="basis-2/12">
-    <a mat-fab extended [routerLink]="['/guest-map']">
-      <mat-icon>arrow_back</mat-icon>
-      Quay lại
-    </a>
-  </div>
-  <div class="text-2xl font-bold basis-full self-center text-center uppercase">
-    Quản lý Bảo trì
-  </div>
-<div class="basis-3/12 flex justify-end">
-    <a mat-fab extended (click)="onAdd()">
-      <mat-icon>add</mat-icon>
-      Thêm lịch bảo trì
-    </a>
+<div class="sticky top-0 left-0 right-0 z-99">
+  <div class="flex items-center m-2">
+    <div class="basis-2/12">
+      <a mat-stroked-button extended [routerLink]="['/guest-map']">
+        <mat-icon>arrow_back</mat-icon>
+        Quay lại
+      </a>
+    </div>
+    <div
+      class="text-2xl font-bold basis-full self-center text-center uppercase"
+    >
+      Quản lý Bảo trì
+    </div>
+    <div class="basis-3/12 flex justify-end">
+      <a mat-flat-button extended (click)="onAdd()">
+        <mat-icon>add</mat-icon>
+        Thêm lịch bảo trì
+      </a>
+    </div>
   </div>
 </div>
 
@@ -119,7 +123,6 @@
     [pageSize]="paging.pageSize"
     [pageSizeOptions]="[5, 10, 20, 100]"
     [length]="dataSource().data.length"
-    aria-label="Select page of periodic elements"
     (page)="handlePaging($event)"
     showFirstLastButtons
   >

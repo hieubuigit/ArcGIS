@@ -12,6 +12,7 @@ import {
   MatDialogActions,
   MatDialogContent,
   MatDialogModule,
+  MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
 
@@ -41,9 +42,10 @@ import {
 export class ConfirmComponent implements OnInit {
   @Input() title: string = '';
   @Input() content: string = '';
-  @Output() isConfirm = new EventEmitter<boolean>(false);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<ConfirmComponent>,
+) {}
 
   ngOnInit(): void {
     this.title = this.data.title;
@@ -53,6 +55,6 @@ export class ConfirmComponent implements OnInit {
   onCancel() {}
 
   onAccept() {
-    this.isConfirm.emit(true);
+    this.dialogRef.close(false);
   }
 }

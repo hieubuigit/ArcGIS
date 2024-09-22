@@ -5,9 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { sampleData, Transaction } from './transaction-management.model';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Paging } from '../share/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-transaction-management',
@@ -44,15 +45,11 @@ export class TransactionManagementComponent implements OnInit {
     new MatTableDataSource<Transaction>(this.sampleTransactions)
   );
 
-  constructor(private _router: Router){}
+  constructor(private _dialog: MatDialog) {}
 
   ngOnInit(): void {
     // this.fetchData();
   }
-
-  onEdit() {}
-
-  onDelete() {}
 
   fetchData() {
     // this._httpClient.get('example').subscribe({
@@ -65,8 +62,5 @@ export class TransactionManagementComponent implements OnInit {
     // })
   }
 
-handlePaging(event: PageEvent) {
-
-}
-
+  handlePaging(event: PageEvent) {}
 }
