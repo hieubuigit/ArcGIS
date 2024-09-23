@@ -18,7 +18,6 @@ import { Router, RouterLink } from '@angular/router';
     RouterLink,
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   form = this._formBuilder.group({
