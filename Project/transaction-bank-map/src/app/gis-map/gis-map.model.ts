@@ -11,10 +11,25 @@ export namespace GisMap {
     { name: 'Đóng cửa', value: GisMap.Status.DongCua },
   ];
 
-  export interface GraphicModel {
+  export interface TransactionPopUp {
+    name: string;
+    status: string,
+    upTime: string,
+    customerQty: number,
+    employeeQty: number,
+    totalCost: number,
+    latestMaintain: number,
+   }
 
+  export interface WardPopUp {
+    name: string,
   }
 
+  export interface MapControl {
+    year: number,
+    showCloseTransaction: boolean,
+    showWard: boolean,
+  }
 }
 
 

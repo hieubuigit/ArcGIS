@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { AfterViewInit, Component, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import {
   GenderItems,
@@ -38,7 +38,7 @@ import { MapNameEnumPipe } from '../share/map-name-enum.pipe';
   providers: [MatDialog],
   templateUrl: './user-management.component.html',
 })
-export class UserManagementComponent {
+export class UserManagementComponent implements AfterViewInit {
   sampleData: User[] = sampleUsers;
   displayedColumns: string[] = [
     'code',
@@ -53,6 +53,8 @@ export class UserManagementComponent {
     'action',
   ];
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   dataSource = signal<MatTableDataSource<User>>(
     new MatTableDataSource<User>(this.sampleData)
   );
@@ -66,7 +68,12 @@ export class UserManagementComponent {
   genderItems = GenderItems;
   userStatusItems = UserStatusItems;
 
+
   constructor(private _dialog: MatDialog) {}
+
+  ngAfterViewInit(): void {
+    this.dataSource().paginator = this.paginator;
+  }
 
   onAdd() {
     this._dialog.open(CreateOrUpdateUserPopupComponent, {

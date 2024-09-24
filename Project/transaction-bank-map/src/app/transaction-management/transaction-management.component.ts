@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, OnInit, signal, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { sampleData, Transaction } from './transaction-management.model';
 import { RouterLink } from '@angular/router';
 import { Paging } from '../share/common';
@@ -24,7 +24,8 @@ import { MatDialog } from '@angular/material/dialog';
   ],
   templateUrl: './transaction-management.component.html',
 })
-export class TransactionManagementComponent implements OnInit {
+export class TransactionManagementComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   sampleTransactions: Transaction[] = sampleData;
   displayedColumns: string[] = [
     'id',
@@ -49,6 +50,10 @@ export class TransactionManagementComponent implements OnInit {
 
   ngOnInit(): void {
     // this.fetchData();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource().paginator = this.paginator;
   }
 
   fetchData() {

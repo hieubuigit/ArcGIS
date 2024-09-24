@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, signal, ViewChild } from '@angular/core';
 import {
   MatPaginator,
   MatPaginatorModule,
@@ -42,8 +42,9 @@ import { MatInputModule } from '@angular/material/input';
   providers: [MaintainTransactionListService],
   templateUrl: './maintain-transaction-list.component.html',
 })
-export class MaintainTransactionListComponent implements OnInit {
+export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   readonly sampleTransactions: MaintainTransaction.Response[] =
     SampleTransactions;
   displayedColumns: string[] = [
@@ -74,9 +75,12 @@ export class MaintainTransactionListComponent implements OnInit {
     private _maintainSvc: MaintainTransactionListService
   ) {}
 
+  ngAfterViewInit(): void {
+    this.dataSource().paginator = this.paginator;
+  }
+
   ngOnInit(): void {
     this.getData();
-    this.dataSource().paginator = this.paginator;
   }
 
   getData() {

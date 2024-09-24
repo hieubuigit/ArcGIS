@@ -5,20 +5,18 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
-import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import { MatButtonModule } from '@angular/material/button';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import Color from '@arcgis/core/Color';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CreateOrUpdateBankBranchPopupComponent } from './create-or-update-bank-branch-popup/create-or-update-bank-branch-popup.component';
-import { PopUpType } from '../share/common';
+import { PopUpType, SelectItem } from '../share/common';
 import { UserType } from '../user-management/user-management.model';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmComponent } from '../share/confirm.component';
 import { UpdatePasswordComponent } from '../user-authentication/update-password/update-password.component';
-import Graphic from '@arcgis/core/Graphic';
 import { GisMapService } from './gis-map.service';
-
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-guest-map',
@@ -31,6 +29,7 @@ import { GisMapService } from './gis-map.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    MatCheckboxModule,
   ],
   providers: [GisMapService],
   templateUrl: './gis-map.component.html',
@@ -40,6 +39,13 @@ export class GisMapComponent implements OnInit {
   userTypes = UserType;
   private view!: MapView;
   private dialogRef!: MatDialogRef<ConfirmComponent>;
+  descriptionItems : SelectItem<string>[] = [
+    {name: 'Ít', value: 'blue'},
+    {name: 'Vừa', value: 'orange'},
+    {name: 'Đông đảo', value: 'red'},
+    {name: 'Bảo trì', value: 'gray'},
+    {name: 'Đóng cửa', value: 'black'},
+  ];
 
   constructor(
     private _dialog: MatDialog,
