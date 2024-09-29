@@ -22,7 +22,7 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>Mô tả</mat-label>
-        <textarea matInput formControlName="ward" type="text" ></textarea>
+        <textarea matInput formControlName="ward" type="text"></textarea>
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
@@ -68,13 +68,7 @@
 
 <div mat-dialog-actions>
   <div class="flex justify-end p-2">
-    <button
-      mat-stroked-button
-      mat-dialog-close
-      class="mx-2"
-    >
-      Huỷ
-    </button>
+    <button mat-stroked-button mat-dialog-close class="mx-2">Huỷ</button>
     <button mat-flat-button (click)="onSave()">
       @if(popupType === popupTypes.Add) { Lưu } @else { Cập Nhật }
     </button>

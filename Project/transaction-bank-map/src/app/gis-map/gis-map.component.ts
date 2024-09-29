@@ -16,7 +16,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmComponent } from '../share/confirm.component';
 import { UpdatePasswordComponent } from '../user-authentication/update-password/update-password.component';
 import { GisMapService } from './gis-map.service';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { log } from 'console';
 
 @Component({
   selector: 'app-guest-map',
@@ -39,12 +40,12 @@ export class GisMapComponent implements OnInit {
   userTypes = UserType;
   private view!: MapView;
   private dialogRef!: MatDialogRef<ConfirmComponent>;
-  descriptionItems : SelectItem<string>[] = [
-    {name: 'Ít', value: 'blue'},
-    {name: 'Vừa', value: 'orange'},
-    {name: 'Đông đảo', value: 'red'},
-    {name: 'Bảo trì', value: 'gray'},
-    {name: 'Đóng cửa', value: 'black'},
+  descriptionItems: SelectItem<string>[] = [
+    { name: 'Ít', value: 'bg-blue-500' },
+    { name: 'Vừa', value: 'bg-orange-500' },
+    { name: 'Đông đảo', value: 'bg-red-500' },
+    { name: 'Bảo trì', value: 'bg-gray-500' },
+    { name: 'Đóng cửa', value: 'bg-black' },
   ];
 
   constructor(
@@ -74,6 +75,10 @@ export class GisMapComponent implements OnInit {
       },
     });
 
+    this.view.when(() => {
+      this.addClickEventHandler();
+    });
+
     const graphicsLayer = new GraphicsLayer();
     this._gisMapSvc.getPolygons().forEach((data) => {
       graphicsLayer.add(this._gisMapSvc.createGraphic(data));
@@ -86,6 +91,15 @@ export class GisMapComponent implements OnInit {
     this._gisMapSvc.getPoints().forEach((data) => {
       graphicsLayer.add(this._gisMapSvc.createGraphic(data));
     });
+
+
+    // Handle click events on the graphics layer
+    // graphicsLayer.on('click', (event) => {
+    //   if (event.graphic) { // Check if a graphic was clicked
+    //     this.handleGraphicClick(event.graphic);
+    //   }
+    // });
+
 
     // Add Icon to map
     // const iconGraphic = new Graphic({
@@ -107,6 +121,14 @@ export class GisMapComponent implements OnInit {
     // });
 
     map.add(graphicsLayer);
+  }
+
+  addClickEventHandler() {
+    this.view.on('click', (event) => {
+
+      console.log('Test');
+
+    });
   }
 
   onCloseTransaction(): void {
@@ -168,5 +190,22 @@ export class GisMapComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       console.log(resp);
     });
+  }
+
+  customHeader(mapView: MapView) {
+
+
+    document.getElementsByClassName("closeBtn")[0]?.addEventListener('click', () => {
+      console.log('clicking');
+    });
+
+    document.getElementsByClassName("editBtn")[0].addEventListener('click', () => {
+      console.log('clicking');
+    });
+
+    document.getElementById("createMaintainBtn")?.addEventListener('click', () => {
+      console.log('clicking');
+    });
+
   }
 }

@@ -18,7 +18,7 @@ export namespace GisMap {
     customerQty: number,
     employeeQty: number,
     totalCost: number,
-    latestMaintain: number,
+    latestMaintain: string,
    }
 
   export interface WardPopUp {

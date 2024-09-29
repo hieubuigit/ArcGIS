@@ -64,7 +64,7 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
   constructor(
     private _formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CreateOrUpdateBankBranchPopupComponent>,
+    private dialogRef: MatDialogRef<CreateOrUpdateBankBranchPopupComponent>
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +77,5 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
     this.dialogRef.close(this.form.getRawValue());
   }
 
-  fetchWardData() {
-  }
+  fetchWardData() {}
 }

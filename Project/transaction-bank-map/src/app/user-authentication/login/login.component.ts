@@ -25,9 +25,7 @@ export class LoginComponent {
     password: ['', [Validators.required]],
   });
 
-  constructor(private _formBuilder: FormBuilder, private router: Router) {
-
-  }
+  constructor(private _formBuilder: FormBuilder, private router: Router) {}
 
   onLogin() {
     const formData = this.form.getRawValue();

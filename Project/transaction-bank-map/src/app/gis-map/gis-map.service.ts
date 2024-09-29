@@ -7,22 +7,48 @@ import {
   wardsGeo,
 } from '../share/geo-info';
 import Graphic from '@arcgis/core/Graphic';
+import { GisMap } from './gis-map.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GisMapService {
-  point_template_tree = {
-    title: '{Name}',
-    content: '{Location}</b>.',
+  readonly pointTemplate = {
+    title: '<div style="font-weight:700;">{name}</div>',
+    content: `
+    <div class="container">
+    <div class="flex flex-col items-start">
+      <div class="field">
+        <strong>Trạng thái:</strong> <span>{status}</span>
+      </div>
+      <div class="field">
+        <strong>Thời gian hoạt động:</strong> <span>{upTime}</span>
+      </div>
+      <div class="field">
+        <strong>Số lượng khách hàng: </strong> <span>{customerQty}</span>
+      </div>
+      <div class="field">
+        <strong>Số lượng nhân viên: </strong> <span>{employeeQty}</span>
+      </div>
+      <div class="field">
+        <strong>Tổng chi phí: </strong> <span>{totalCost} VND</span>
+      </div>
+      <div class="field">
+        <strong>Lần bảo trì gần nhất: </strong> <span>{latestMaintain}</span>
+      </div>
+    </div>
+    </div>
+    `,
   };
-  point_template_area = {
-    title: '{Name}',
-    content: '{Location}</b>.',
-  };
-  point_template_university = {
-    title: '{Name}',
-    content: '{Location}</b>.',
+
+  transPopup: GisMap.TransactionPopUp = {
+    name: 'PGD-01',
+    status: 'Đang hoạt động',
+    upTime: '12:00 AM - 17:00 PM',
+    customerQty: 100,
+    employeeQty: 10,
+    totalCost: 1000,
+    latestMaintain: '2024-09-24',
   };
 
   constructor() {}
@@ -41,7 +67,7 @@ export class GisMapService {
     new Graphic({
       geometry: data,
       symbol: data.symbol,
-      attributes: data,
+      attributes: data.attributes,
       popupTemplate: data.popupTemplate,
     });
 
@@ -60,7 +86,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -75,7 +100,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -90,7 +114,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -105,7 +128,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -120,7 +142,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -135,7 +156,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -150,7 +170,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -165,7 +184,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -180,7 +198,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
       {
         type: 'polygon',
@@ -195,7 +212,6 @@ export class GisMapService {
             width: 1,
           },
         },
-        popupTemplate: this.point_template_university,
       },
     ];
   }
@@ -212,7 +228,7 @@ export class GisMapService {
         },
         Name: 'Quận 1',
         Location: 'Tp. Hồ Chí Minh',
-        popupTemplate: this.point_template_area,
+        // popupTemplate: this.point_template_area,
       },
       ...streets,
     ];
@@ -234,7 +250,7 @@ export class GisMapService {
             width: 2,
           },
         },
-        popupTemplate: this.point_template_tree,
+        attributes: this.transPopup,
       },
       {
         type: 'point',
@@ -250,7 +266,7 @@ export class GisMapService {
             width: 4,
           },
         },
-        popupTemplate: this.point_template_tree,
+        attributes: this.transPopup,
       },
       {
         type: 'point',
@@ -266,13 +282,25 @@ export class GisMapService {
             width: 2,
           },
         },
-        popupTemplate: this.point_template_tree,
+        attributes: this.transPopup,
       },
     ];
   }
 
   addTransactionBankGeos() {
-    const transactionPoints: { type: string; latitude: number; longitude: number; Name: string; Location: string; symbol: { type: string; color: number[]; outline: { color: number[]; width: number; }; }; popupTemplate: { title: string; content: string; }; }[] = [];
+    const transactionPoints: {
+      type: string;
+      latitude: number;
+      longitude: number;
+      Name: string;
+      Location: string;
+      symbol: {
+        type: string;
+        color: number[];
+        outline: { color: number[]; width: number };
+      };
+      popupTemplate: { title: string; content: string };
+    }[] = [];
     transactionBankGeos.forEach((i, index) => {
       transactionPoints.push({
         type: 'point',
@@ -288,7 +316,7 @@ export class GisMapService {
             width: 2,
           },
         },
-        popupTemplate: this.point_template_tree,
+        popupTemplate: { title: '', content: '' },
       });
     });
     return transactionPoints;

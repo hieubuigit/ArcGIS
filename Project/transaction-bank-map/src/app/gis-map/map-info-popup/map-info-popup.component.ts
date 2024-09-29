@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { GisMap } from '../gis-map.model';
 
@@ -8,7 +8,7 @@ import { GisMap } from '../gis-map.model';
   imports: [MatButtonModule],
   templateUrl: './map-info-popup.component.html',
 })
-export class MapInfoPopupComponent {
+export class MapInfoPopupComponent implements OnInit {
   transPopup: GisMap.TransactionPopUp = {
     name: '',
     status: '',
@@ -16,6 +16,10 @@ export class MapInfoPopupComponent {
     customerQty: 0,
     employeeQty: 0,
     totalCost: 0,
-    latestMaintain: 0
+    latestMaintain: '',
   }
+
+  ngOnInit(): void {
+  }
+
 }
