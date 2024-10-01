@@ -7,12 +7,23 @@
         <mat-label>User Name</mat-label>
         <input matInput formControlName="userName" />
       </mat-form-field>
+      @if (form.controls.userName.value === '' && form.controls.password.invalid) {
+      <p class="text-red-500 text-center">Trường này không hợp lệ</p>
+      }
 
       <!-- Password -->
       <mat-form-field class="flex justify-center">
         <mat-label>Password</mat-label>
         <input matInput formControlName="password" type="password" />
       </mat-form-field>
+      @if (form.controls.password.value === '' && form.controls.password.invalid) {
+      <p class="text-red-500 text-center">Trường này không hợp lệ</p>
+      }
+
+      <!-- Error -->
+      @if (error()) {
+      <p class="text-red-500 text-center">{{ error() }}</p>
+      }
 
       <button mat-flat-button class="mb-4" type="button" (click)="onLogin()">
         Đăng nhập

@@ -24,6 +24,7 @@ import { PopUpType } from '../../share/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MaintainTransactionListService } from '../maintain-transaction-list.service';
 import { HttpClientModule } from '@angular/common/http';
+import { TimeInputDirective } from '../../share/directive/time-input.directive';
 
 @Component({
   selector: 'app-create-or-update-schedule-maintain-popup',
@@ -46,6 +47,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatDialogModule,
     MatDatepickerModule,
     HttpClientModule,
+    TimeInputDirective
   ],
   providers: [provideNativeDateAdapter(), MaintainTransactionListService],
   templateUrl: './create-or-update-schedule-maintain-popup.component.html',

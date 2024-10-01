@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
+import { UserAuthenticationService } from '../user-authentication.service';
+import { HttpClientModule } from '@angular/common/http';
+import { LocalStorageService } from '../../share/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -16,21 +19,38 @@ import { Router, RouterLink } from '@angular/router';
     MatButtonModule,
     MatIconModule,
     RouterLink,
+    HttpClientModule,
   ],
+  providers: [UserAuthenticationService, LocalStorageService],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
   form = this._formBuilder.group({
-    userName: ['', Validators.required],
-    password: ['', [Validators.required]],
+    userName: [null, [Validators.required]],
+    password: [null, [Validators.required]],
   });
+  error = signal<string | null>(null);
 
-  constructor(private _formBuilder: FormBuilder, private router: Router) {}
+  constructor(
+    private readonly _formBuilder: FormBuilder,
+    private readonly router: Router,
+    private readonly _userAuth: UserAuthenticationService,
+    private readonly _lsStorageSvc: LocalStorageService,
+  ) {
+  }
 
   onLogin() {
-    const formData = this.form.getRawValue();
-    if ((formData.userName === '123', formData.password === '123')) {
-      this.router.navigate(['/guest-map']);
-    }
+    const { userName, password } = this.form.getRawValue();
+    const request = { username: userName, password: password };
+    this._userAuth.login(request).subscribe({
+      next: (value) => {
+        if (!value) return;
+        this._lsStorageSvc.setCurrentUser(value);
+        this.router.navigate(['/guest-map']);
+      },
+      error: (err) => {
+        this.error.set("Tài khoản và mật khẩu không chính xác!");
+      },
+    });
   }
 }

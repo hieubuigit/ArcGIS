@@ -29,9 +29,9 @@ export class UpdatePasswordComponent {
   });
 
   constructor(
-    private _formBuilder: FormBuilder,
-    private router: Router,
-    private dialogRef: MatDialogRef<UpdatePasswordComponent>
+    private readonly _formBuilder: FormBuilder,
+    private readonly router: Router,
+    private readonly dialogRef: MatDialogRef<UpdatePasswordComponent>
   ) {
     this.router.events.subscribe((event) => {
       console.log(event); // Log router events for debugging
