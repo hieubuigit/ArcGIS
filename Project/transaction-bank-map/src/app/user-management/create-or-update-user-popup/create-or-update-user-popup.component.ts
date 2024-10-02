@@ -19,13 +19,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { PopUpType } from '../../share/common';
-import {
-  Gender,
-  GenderItems,
-  User,
-  UserType,
-  UserTypeItems,
-} from '../user-management.model';
+import { Gender, GenderItems, User, UserType, UserTypeItems } from '../user-management.model';
 
 @Component({
   selector: 'app-create-or-update-user-popup',
@@ -69,9 +63,9 @@ export class CreateOrUpdateUserPopupComponent implements OnInit {
   genderItems = GenderItems;
 
   constructor(
-    private _formBuilder: FormBuilder,
+    private readonly _formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CreateOrUpdateUserPopupComponent>,
+    private readonly dialogRef: MatDialogRef<CreateOrUpdateUserPopupComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -91,13 +85,13 @@ export class CreateOrUpdateUserPopupComponent implements OnInit {
     this.form.setValue({
       userId: rowData.userId,
       email: rowData.email,
-      userName: rowData.userName,
+      userName: rowData.username,
       password: rowData.password,
       fullName: rowData.fullName,
-      phone: rowData.phone,
+      phone: rowData.phoneNumber,
       gender: rowData.gender,
       address: rowData.address,
-      userType: rowData.userType,
+      userType: rowData.role,
     });
   }
 }

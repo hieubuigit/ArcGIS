@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainComponent } from "./main/main.component";
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { InterceptorService } from './share/authentication/interceptor.service';
+import { InterceptorService } from './share/interceptor/interceptor.service';
 
 @Component({
   selector: 'app-root',

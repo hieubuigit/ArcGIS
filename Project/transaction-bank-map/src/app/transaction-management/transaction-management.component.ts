@@ -46,7 +46,7 @@ export class TransactionManagementComponent implements OnInit, AfterViewInit {
     new MatTableDataSource<Transaction>(this.sampleTransactions)
   );
 
-  constructor(private _dialog: MatDialog) {}
+  constructor(private readonly _dialog: MatDialog) {}
 
   ngOnInit(): void {
     // this.fetchData();
