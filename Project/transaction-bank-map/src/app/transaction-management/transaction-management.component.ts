@@ -19,7 +19,7 @@ import { Paging } from '../share/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   CustomerOffice,
-} from './transaction-management.model copy';
+} from './transaction-management.model';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { HttpClientModule } from '@angular/common/http';
 import { TransactionManagementService } from './transaction-management.service';

@@ -12,6 +12,7 @@ import {
   MatDialogClose,
   MatDialogContent,
   MatDialogModule,
+  MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,11 +21,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
-import { PopUpType } from '../../share/common';
+import { formatDateTimeFromMilliSecond, PopUpType } from '../../share/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MaintainTransactionListService } from '../maintain-transaction-list.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TimeInputDirective } from '../../share/directive/time-input.directive';
+import { MaintainTransaction } from '../maintain-transaction-list.model';
 
 @Component({
   selector: 'app-create-or-update-schedule-maintain-popup',
@@ -47,7 +49,7 @@ import { TimeInputDirective } from '../../share/directive/time-input.directive';
     MatDialogModule,
     MatDatepickerModule,
     HttpClientModule,
-    TimeInputDirective
+    TimeInputDirective,
   ],
   providers: [provideNativeDateAdapter(), MaintainTransactionListService],
   templateUrl: './create-or-update-schedule-maintain-popup.component.html',
@@ -57,10 +59,12 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
   popupTypes = PopUpType;
 
   form = this._formBuilder.group({
-    transOfficeCode: ['', Validators.required],
-    calendarName: ['', Validators.required],
-    description: ['', [Validators.required]],
-    cost: this._formBuilder.control<null | number>(null, [Validators.required]),
+    code: ['', Validators.required],
+    maintenanceName: ['', Validators.required],
+    maintenanceDescriptions: ['', [Validators.required]],
+    maintenanceCost: this._formBuilder.control<null | number>(null, [
+      Validators.required,
+    ]),
     startTime: ['', [Validators.required]],
     startDate: ['', [Validators.required]],
     endTime: ['', [Validators.required]],
@@ -71,29 +75,40 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) private data: any,
-    private _service: MaintainTransactionListService
+    private _service: MaintainTransactionListService,
+    private readonly dialogRef: MatDialogRef<CreateOrUpdateScheduleMaintainPopupComponent>
   ) {}
 
   ngOnInit(): void {
     if (this.data) {
       this.popupType = this.data.popupType;
+      if (this.data.popupType === PopUpType.Add) {
+        this.form.controls.code.setValue(this.data.code);
+      }
+      if (this.data.popupType === PopUpType.Update) {
+        this.mapFormData(this.data.rowData);
+      }
     }
   }
 
   onCancel() {}
 
   onSave() {
-    const form = this.form.getRawValue();
-    // if (this.popupType === PopUpType.Add) {
-    //   this._service.create(form).subscribe({
-    //     next: (resp) => {},
-    //     error: (err) => {},
-    //   });
-    // } else if (this.popupType === PopUpType.Update) {
-    //   this._service.update(0).subscribe({
-    //     next: (resp) => {},
-    //     error: (err) => {},
-    //   });
-    // }
+    this.dialogRef.close(this.form.getRawValue());
+  }
+
+  mapFormData(rowData: MaintainTransaction.Response) {
+    const startTime = formatDateTimeFromMilliSecond(rowData.startTime);
+    const endTime = formatDateTimeFromMilliSecond(rowData.endTime);
+    this.form.setValue({
+      code: rowData.code,
+      maintenanceName: rowData.maintenanceName,
+      maintenanceDescriptions: rowData.maintenanceDescriptions,
+      maintenanceCost: rowData.maintenanceCost,
+      startTime: startTime.time,
+      startDate: startTime.date,
+      endTime: endTime.time,
+      endDate: endTime.date,
+    });
   }
 }

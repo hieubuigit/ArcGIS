@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Paging, ResponseApi } from '../share/common';
 import { environment } from '../../environment/environment';
-import { TransactionPaging } from './transaction-management.model copy';
+import { TransactionPaging } from './transaction-management.model';
 
 @Injectable()
 export class TransactionManagementService {

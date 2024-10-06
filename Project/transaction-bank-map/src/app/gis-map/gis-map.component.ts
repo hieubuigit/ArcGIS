@@ -46,7 +46,8 @@ export class GisMapComponent implements OnInit {
   userTypes = UserType;
 
   view: any = null;
-  @ViewChild('mapViewNode', { static: true }) private readonly mapViewEl!: ElementRef;
+  @ViewChild('mapViewNode', { static: true })
+  private readonly mapViewEl!: ElementRef;
 
   private readonly dialogRef!: MatDialogRef<ConfirmComponent>;
   isAdmin = false;
@@ -69,7 +70,7 @@ export class GisMapComponent implements OnInit {
     private readonly _dialog: MatDialog,
     private readonly _router: Router,
     private readonly _gisMapSvc: GisMapService,
-    private readonly _ls: LocalStorageService,
+    private readonly _ls: LocalStorageService
   ) {}
 
   ngOnInit(): void {
@@ -140,7 +141,6 @@ export class GisMapComponent implements OnInit {
     // this._gisMapSvc.addTransactionBankGeos().forEach((point) => {
     //   graphicsLayer.add(iconGraphic);
     // });
-
 
     // map.add(graphicsLayer);
   }

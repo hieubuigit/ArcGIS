@@ -11,7 +11,7 @@ export class MaintainTransactionListService {
   getPaging(params: Paging) {
     const prQuery = new HttpParams({ fromObject: { ...params } });
     return this._http.get<ResponseApi<MaintainTransaction.MaintainPaging>>(
-      `${environment.apiUrl}/users`,
+      `${environment.apiUrl}/maintenance`,
       { params: prQuery }
     );
   }

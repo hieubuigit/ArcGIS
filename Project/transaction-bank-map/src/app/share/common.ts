@@ -11,19 +11,39 @@ export enum PopUpType {
 }
 
 export interface Paging {
-  page: number,
-  pageSize: number,
+  page: number;
+  pageSize: number;
   searchKey?: string;
   status?: string;
-  keySort?: string,
-  sortDesc?: boolean,
-  totalPage?: number,
+  keySort?: string;
+  sortDesc?: boolean;
+  totalPage?: number;
 }
 
 export interface ResponseApi<T> {
   data: T;
-  message : string;
+  message: string;
   status: number;
 }
 
-export const isAvailable = (value: any) : boolean => (value !== null && value !== undefined && value !== '');
+export const isAvailable = (value: any): boolean =>
+  value !== null && value !== undefined && value !== '';
+
+export const formatDateTimeFromMilliSecond = (milliseconds: number) => {
+  const date = new Date(milliseconds * 1000);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return {
+    date: `${year}-${month}-${day}`,
+    time: `${hours}:${minutes}`,
+  };
+};
+
+export const getDateTimeFromStr = (date: string, time: string) => {
+  const [year, month, day] = date.split('-').map(Number);
+  const [hours, minutes] = time.split(':').map(Number);
+  return new Date(year, month - 1, day, hours, minutes);
+};
