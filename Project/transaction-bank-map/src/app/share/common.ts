@@ -11,8 +11,19 @@ export enum PopUpType {
 }
 
 export interface Paging {
-  pageIndex: number,
+  page: number,
   pageSize: number,
+  searchKey?: string;
+  status?: string;
   keySort?: string,
   sortDesc?: boolean,
+  totalPage?: number,
 }
+
+export interface ResponseApi<T> {
+  data: T;
+  message : string;
+  status: number;
+}
+
+export const isAvailable = (value: any) : boolean => (value !== null && value !== undefined && value !== '');

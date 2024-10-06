@@ -114,12 +114,17 @@
 
     <!-- Row shown when there is no matching data. -->
     <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="10">No Data"</td>
+      <td class="mat-cell font-bold text-gray-400 p-10" colspan="9">
+        <div class="flex items-center justify-center">
+          <mat-icon>search</mat-icon>
+          No Data
+        </div>
+      </td>
     </tr>
   </table>
 
   <mat-paginator
-    [pageIndex]="paging.pageIndex"
+    [pageIndex]="paging.page"
     [pageSize]="paging.pageSize"
     [pageSizeOptions]="[5, 10, 20, 100]"
     [length]="dataSource().data.length"

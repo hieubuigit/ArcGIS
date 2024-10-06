@@ -21,7 +21,7 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent {
-  constructor(private _formBuilder: FormBuilder, private router: Router) {
+  constructor(private readonly _formBuilder: FormBuilder, private readonly router: Router) {
     this.router.events.subscribe((event) => {
       console.log(event); // Log router events for debugging
     });

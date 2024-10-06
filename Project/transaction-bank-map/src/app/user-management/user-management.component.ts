@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {
@@ -14,11 +20,19 @@ import { Paging, PopUpType } from '../share/common';
 import { RouterLink } from '@angular/router';
 import { ConfirmComponent } from '../share/confirm.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MapNameEnumPipe } from '../share/map-name-enum.pipe';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserManagementService } from './user-management.service';
-import { User, UserTypeItems, GenderItems, UserStatusItems } from './user-management.model';
+import {
+  User,
+  UserTypeItems,
+  GenderItems,
+  UserStatusItems,
+  columns,
+} from './user-management.model';
+import { HttpClientModule } from '@angular/common/http';
+import { MillisecondsToDatePipe } from '../share/pipes/milliseconds-to-date.pipe';
 
 @Component({
   selector: 'app-user-management',
@@ -34,29 +48,20 @@ import { User, UserTypeItems, GenderItems, UserStatusItems } from './user-manage
     MatProgressSpinnerModule,
     MatSortModule,
     MapNameEnumPipe,
+    HttpClientModule,
+    MillisecondsToDatePipe,
   ],
-  providers: [MatDialog],
+  providers: [MatDialog, UserManagementService],
   templateUrl: './user-management.component.html',
 })
-export class UserManagementComponent implements AfterViewInit {
-  displayedColumns: string[] = [
-    'code',
-    'email',
-    'phone',
-    'fullName',
-    'userName',
-    'userType',
-    'status',
-    'createdDate',
-    'updatedDate',
-    'action',
-  ];
-
+export class UserManagementComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  dataSource = signal<MatTableDataSource<User[]> | null>(null);
+  @ViewChild(MatSort) sort!: MatSort;
+  displayedColumns: string[] = columns;
+  dataSource = signal<MatTableDataSource<User>>(new MatTableDataSource<User>());
 
   paging: Paging = {
-    pageIndex: 1,
+    page: 1,
     pageSize: 5,
   };
 
@@ -64,36 +69,95 @@ export class UserManagementComponent implements AfterViewInit {
   genderItems = GenderItems;
   userStatusItems = UserStatusItems;
 
-  constructor(private readonly _dialog: MatDialog, private readonly _userSvc: UserManagementService) {}
+  constructor(
+    private readonly _dialog: MatDialog,
+    private readonly _userSvc: UserManagementService,
+  ) {}
+
+  ngOnInit(): void {
+    this.fetchData();
+  }
 
   ngAfterViewInit(): void {
-    if (this.dataSource()) {
-      this.dataSource()!.paginator = this.paginator;
-    }
+  }
+
+  fetchData() {
+    const queryParams = {
+      ...this.paging,
+      keyword: '',
+      role: '',
+      status: '',
+    };
+    this._userSvc.getPaging(queryParams).subscribe({
+      next: (res) => {
+        this.paging.totalPage = res.data.totalPage;
+        this.dataSource.set(new MatTableDataSource(res?.data.users));
+        this.dataSource().paginator = this.paginator;
+        this.dataSource().sort = this.sort;
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   onAdd() {
-    const dialogRef = this._dialog.open(CreateOrUpdateUserPopupComponent, {
-      width: '700px',
-      data: { popupType: PopUpType.Add },
-    });
-
-    dialogRef.afterClosed().subscribe((userModel) => {
-      if (userModel) {
-        this._userSvc.create(userModel);
-      }
+    this._userSvc.getCode().subscribe({
+      next: (resp) => {
+        if (resp) {
+          const dialogRef = this._dialog.open(
+            CreateOrUpdateUserPopupComponent,
+            {
+              width: '700px',
+              data: { popupType: PopUpType.Add, code: resp.data },
+            }
+          );
+          dialogRef.afterClosed().subscribe((userModel) => {
+            if (userModel) {
+              this._userSvc.create(userModel).subscribe({
+                next: (result) => {
+                  this.fetchData();
+                },
+                error: (err) => {
+                  console.log(err);
+                },
+              });
+            }
+          });
+        }
+      },
+      error: (err) => {},
     });
   }
 
-  onEdit(el: User) {
-    const dialogRef = this._dialog.open(CreateOrUpdateUserPopupComponent, {
-      width: '700px',
-      data: { popupType: PopUpType.Update, rowData: el },
-    });
-
-    dialogRef.afterClosed().subscribe((res) => {
-      console.log('user update: ', res);
-    });
+  onEdit(code: string) {
+    const rowData = this.dataSource().data.find((i) => i.code === code);
+    if (rowData) {
+      const dialogRef = this._dialog.open(CreateOrUpdateUserPopupComponent, {
+        width: '700px',
+        data: { popupType: PopUpType.Update, rowData: rowData },
+      });
+      dialogRef.afterClosed().subscribe((res) => {
+        if (res) {
+          rowData!.code = res.code;
+          rowData!.email = res.email;
+          rowData!.username = res.username;
+          rowData!.fullName = res.fullName;
+          rowData!.phoneNumber = res.phoneNumber;
+          rowData!.gender = res.gender;
+          rowData!.address = res.address;
+          rowData!.role = res.role;
+          this._userSvc.update(rowData.id, rowData).subscribe({
+            next: (result) => {
+              this.fetchData();
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
+        }
+      });
+    }
   }
 
   onDelete(el: User) {
@@ -106,15 +170,27 @@ export class UserManagementComponent implements AfterViewInit {
         popupType: PopUpType.Delete,
       },
     });
-
     dialogRef.afterClosed().subscribe((isAccept) => {
       if (isAccept) {
-        console.log('Is Accept:', isAccept);
+        this._userSvc.remove(el.id).subscribe({
+          next: (result) => {
+            this.fetchData();
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
       }
     });
   }
 
   handlePaging(event: PageEvent) {
-    console.log(event);
+    this.paging.page = event.pageIndex + 1;
+    this.paging.pageSize = event.pageSize;
+    this.fetchData();
+  }
+
+  sortData(sort: Sort) {
+    console.log(sort);
   }
 }

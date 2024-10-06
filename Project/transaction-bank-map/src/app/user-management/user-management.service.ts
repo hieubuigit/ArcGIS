@@ -1,16 +1,23 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environment/environment';
-import { CreateOrUpdateUser, QueryParams, User } from './user-management.model';
+import {
+  CreateOrUpdateUser,
+  QueryParams,
+  UserPaging,
+} from './user-management.model';
+import { ResponseApi } from '../share/common';
 
 @Injectable()
 export class UserManagementService {
-
   private readonly _http = inject(HttpClient);
 
   getPaging(params: QueryParams) {
-    const prQuery = new HttpParams({fromObject: {...params}});
-    return this._http.get<User[]>(`${environment.apiUrl}/auth/login`, {params: prQuery});
+    const prQuery = new HttpParams({ fromObject: { ...params } });
+    return this._http.get<ResponseApi<UserPaging>>(
+      `${environment.apiUrl}/users`,
+      { params: prQuery }
+    );
   }
 
   create(user: CreateOrUpdateUser) {
@@ -23,5 +30,9 @@ export class UserManagementService {
 
   remove(userId: string) {
     return this._http.delete(`${environment.apiUrl}/users/${userId}`);
+  }
+
+  getCode() {
+    return this._http.get<ResponseApi<string>>(`${environment.apiUrl}/users/get-code`);
   }
 }

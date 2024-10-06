@@ -7,7 +7,7 @@ import { SelectItem } from './common';
 })
 export class MapNameEnumPipe implements PipeTransform {
   transform(value: any, enumType: SelectItem<any>[]): string {
-    const item = enumType.find(x => x.value === value);
+    const item = enumType.find(x => x.value == value);
     return item?.name ?? '';
   }
 }

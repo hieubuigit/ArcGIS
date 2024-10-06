@@ -1,21 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MainComponent } from "./main/main.component";
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { InterceptorService } from './share/interceptor/interceptor.service';
+import { LocalStorageService } from './share/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MainComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: InterceptorService,
-    multi: true,
-  }]
 })
 export class AppComponent {
-  title = 'transaction-bank-map';
+  title = 'Transaction Bank Manage';
 }

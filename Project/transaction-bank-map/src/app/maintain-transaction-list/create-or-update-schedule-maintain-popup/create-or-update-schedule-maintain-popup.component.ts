@@ -83,17 +83,17 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
   onCancel() {}
 
   onSave() {
-    console.log(this.form.getRawValue());
-    if (this.popupType === PopUpType.Add) {
-      this._service.add().subscribe({
-        next: (resp) => {},
-        error: (err) => {},
-      });
-    } else if (this.popupType === PopUpType.Update) {
-      this._service.update(0).subscribe({
-        next: (resp) => {},
-        error: (err) => {},
-      });
-    }
+    const form = this.form.getRawValue();
+    // if (this.popupType === PopUpType.Add) {
+    //   this._service.create(form).subscribe({
+    //     next: (resp) => {},
+    //     error: (err) => {},
+    //   });
+    // } else if (this.popupType === PopUpType.Update) {
+    //   this._service.update(0).subscribe({
+    //     next: (resp) => {},
+    //     error: (err) => {},
+    //   });
+    // }
   }
 }

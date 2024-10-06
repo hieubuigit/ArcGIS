@@ -19,7 +19,14 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { PopUpType } from '../../share/common';
-import { Gender, GenderItems, User, UserType, UserTypeItems } from '../user-management.model';
+import {
+  Gender,
+  GenderItems,
+  User,
+  UserType,
+  UserTypeItems,
+} from '../user-management.model';
+import { log } from 'console';
 
 @Component({
   selector: 'app-create-or-update-user-popup',
@@ -45,17 +52,17 @@ import { Gender, GenderItems, User, UserType, UserTypeItems } from '../user-mana
 })
 export class CreateOrUpdateUserPopupComponent implements OnInit {
   form = this._formBuilder.group({
-    userId: ['', Validators.required],
-    userName: ['', Validators.required],
+    code: ['', Validators.required],
+    username: ['', Validators.required],
     password: ['', [Validators.required]],
     fullName: ['', [Validators.required]],
-    phone: ['', [Validators.required, Validators.maxLength(12)]],
+    phoneNumber: ['', [Validators.required, Validators.maxLength(12)]],
     email: ['', [Validators.required]],
     gender: this._formBuilder.control<Gender>(Gender.Male, [
       Validators.required,
     ]),
     address: ['', [Validators.required]],
-    userType: [UserType.Admin, [Validators.required]],
+    role: [UserType.Admin, [Validators.required]],
   });
   popupType: PopUpType = PopUpType.Add;
   popupTypes = PopUpType;
@@ -65,12 +72,15 @@ export class CreateOrUpdateUserPopupComponent implements OnInit {
   constructor(
     private readonly _formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private readonly dialogRef: MatDialogRef<CreateOrUpdateUserPopupComponent>,
+    private readonly dialogRef: MatDialogRef<CreateOrUpdateUserPopupComponent>
   ) {}
 
   ngOnInit(): void {
     if (this.data) {
       this.popupType = this.data.popupType;
+      if (this.data.popupType === PopUpType.Add) {
+        this.form.controls.code.setValue(this.data.code);
+      }
       if (this.data.popupType === PopUpType.Update) {
         this.mapFormData(this.data.rowData);
       }
@@ -83,15 +93,15 @@ export class CreateOrUpdateUserPopupComponent implements OnInit {
 
   mapFormData(rowData: User) {
     this.form.setValue({
-      userId: rowData.userId,
+      code: rowData.code,
       email: rowData.email,
-      userName: rowData.username,
+      username: rowData.username,
       password: rowData.password,
       fullName: rowData.fullName,
-      phone: rowData.phoneNumber,
-      gender: rowData.gender,
-      address: rowData.address,
-      userType: rowData.role,
+      phoneNumber: rowData.phoneNumber,
+      gender: +rowData.gender,
+      address: rowData.address ?? '',
+      role: +rowData.role,
     });
   }
 }

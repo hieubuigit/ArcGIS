@@ -1,5 +1,6 @@
 <div class="flex justify-between items-center my-4 px-4">
   <div class="text-2xl font-bold">Quản Lý PGD Ngân Hàng VietcomBank</div>
+  @if (isAdmin) {
   <div class="buttons flex justify-around">
     <button class="mx-1" mat-flat-button type="button" (click)="onAddTrans()">
       Thêm PGD
@@ -24,20 +25,19 @@
       Admin
     </button>
     } }
-
     <mat-menu #userMenu="matMenu">
       <button mat-menu-item (click)="onChangePass()">Thay đổi mật khẩu</button>
       <button mat-menu-item (click)="onLogOut()">Đăng xuất</button>
     </mat-menu>
-
   </div>
+  }
 </div>
 
 <div class="flex w-full h-screen border-solid border-2 border-blue-500 rounded-md">
-  <div id="mapViewDiv" class="basis-10/12"></div>
+  <div #mapViewNode class="basis-10/12"></div>
   <div class="basis-2/12 border-l-2 p-2">
     <div class="description">
-      <div class="font-bold">Số lượng khách hàng giao dịch</div>
+      <div class="font-bold text-center">Số lượng khách hàng <br> giao dịch</div>
       @for (i of descriptionItems; track $index) {
       <div class="flex justify-start p-2">
         <span class="size-5 rounded-full" [ngClass]="i.value"></span>
@@ -45,5 +45,16 @@
       </div>
       }
     </div>
+    <mat-divider></mat-divider>
+    <div class="control text-center pt-5">
+      <div class="font-bold">{{ chooseYear }}</div>
+      <mat-slider class="w-full" [max]="max" [min]="min" [step]="step">
+        <input matSliderThumb [(ngModel)]="chooseYear" #slider>
+      </mat-slider>
+      <section class="">
+        <mat-checkbox [(ngModel)]="showClosedTransaction">Hiển thị PGD đóng cửa</mat-checkbox>
+      </section>
+    </div>
+
   </div>
 </div>

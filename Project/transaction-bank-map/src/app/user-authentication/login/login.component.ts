@@ -8,11 +8,13 @@ import { Router, RouterLink } from '@angular/router';
 import { UserAuthenticationService } from '../user-authentication.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocalStorageService } from '../../share/local-storage/local-storage.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
+    CommonModule,
     MatInputModule,
     MatFormFieldModule,
     ReactiveFormsModule,
@@ -26,7 +28,7 @@ import { LocalStorageService } from '../../share/local-storage/local-storage.ser
 })
 export class LoginComponent {
   form = this._formBuilder.group({
-    userName: [null, [Validators.required]],
+    username: [null, [Validators.required]],
     password: [null, [Validators.required]],
   });
   error = signal<string | null>(null);
@@ -40,13 +42,13 @@ export class LoginComponent {
   }
 
   onLogin() {
-    const { userName, password } = this.form.getRawValue();
-    const request = { username: userName, password: password };
+    const { username, password } = this.form.getRawValue();
+    const request = { username: username, password: password };
     this._userAuth.login(request).subscribe({
       next: (value) => {
         if (!value) return;
-        this._lsStorageSvc.setCurrentUser(value);
-        this.router.navigate(['/guest-map']);
+        this._lsStorageSvc.setCurrentUser(value.data);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.error.set("Tài khoản và mật khẩu không chính xác!");

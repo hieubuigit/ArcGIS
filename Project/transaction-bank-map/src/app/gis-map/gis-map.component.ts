@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import { MatButtonModule } from '@angular/material/button';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
@@ -17,7 +16,11 @@ import { ConfirmComponent } from '../share/confirm.component';
 import { UpdatePasswordComponent } from '../user-authentication/update-password/update-password.component';
 import { GisMapService } from './gis-map.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { log } from 'console';
+import { LocalStorageService } from '../share/local-storage/local-storage.service';
+import { MatSliderModule } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
+import MapView from '@arcgis/core/views/MapView';
 
 @Component({
   selector: 'app-guest-map',
@@ -31,15 +34,22 @@ import { log } from 'console';
     MatButtonModule,
     MatMenuModule,
     MatCheckboxModule,
+    MatSliderModule,
+    FormsModule,
+    MatDividerModule,
   ],
-  providers: [GisMapService],
+  providers: [GisMapService, LocalStorageService],
   templateUrl: './gis-map.component.html',
 })
 export class GisMapComponent implements OnInit {
   userType: UserType = UserType.Admin;
   userTypes = UserType;
-  private view!: MapView;
-  private dialogRef!: MatDialogRef<ConfirmComponent>;
+
+  view: any = null;
+  @ViewChild('mapViewNode', { static: true }) private readonly mapViewEl!: ElementRef;
+
+  private readonly dialogRef!: MatDialogRef<ConfirmComponent>;
+  isAdmin = false;
   descriptionItems: SelectItem<string>[] = [
     { name: 'Ít', value: 'bg-blue-500' },
     { name: 'Vừa', value: 'bg-orange-500' },
@@ -48,50 +58,62 @@ export class GisMapComponent implements OnInit {
     { name: 'Đóng cửa', value: 'bg-black' },
   ];
 
+  year: number[] = [];
+  chooseYear = new Date().getFullYear();
+  max = this.chooseYear;
+  min = this.max - 10;
+  step = 1;
+  showClosedTransaction: boolean = false;
+
   constructor(
-    private _dialog: MatDialog,
-    private _router: Router,
-    private _gisMapSvc: GisMapService
+    private readonly _dialog: MatDialog,
+    private readonly _router: Router,
+    private readonly _gisMapSvc: GisMapService,
+    private readonly _ls: LocalStorageService,
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this._ls.isExistToken();
     this.initializeMap();
+
+    for (let index = this.min; index < this.max; index++) {
+      this.year.push(index);
+    }
   }
 
-  private initializeMap(): void {
-    // Create map
+  private initializeMap() {
+    const container = this.mapViewEl.nativeElement;
+
+    // // Create map
     const map = new Map({
       basemap: 'topo-vector',
     });
 
     // Create a new MapView
-    this.view = new MapView({
-      container: 'mapViewDiv',
-      map: map,
-      center: [106.703362, 10.776971],
-      zoom: 14,
-      highlightOptions: {
-        color: new Color([255, 0, 0, 0.5]),
-      },
-    });
+    // this.view = new MapView({
+    //   container,
+    //   map: map,
+    //   center: [106.703362, 10.776971],
+    //   zoom: 14,
+    //   highlightOptions: {
+    //     color: new Color([255, 0, 0, 0.5]),
+    //   },
+    // });
 
-    this.view.when(() => {
-      this.addClickEventHandler();
-    });
+    console.log('✅ Map initialized successfully.');
 
-    const graphicsLayer = new GraphicsLayer();
-    this._gisMapSvc.getPolygons().forEach((data) => {
-      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
-    });
+    // const graphicsLayer = new GraphicsLayer();
+    // this._gisMapSvc.getPolygons().forEach((data) => {
+    //   graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    // });
 
-    this._gisMapSvc.getLines().forEach((data) => {
-      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
-    });
+    // this._gisMapSvc.getLines().forEach((data) => {
+    //   graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    // });
 
-    this._gisMapSvc.getPoints().forEach((data) => {
-      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
-    });
-
+    // this._gisMapSvc.getPoints().forEach((data) => {
+    //   graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    // });
 
     // Handle click events on the graphics layer
     // graphicsLayer.on('click', (event) => {
@@ -99,7 +121,6 @@ export class GisMapComponent implements OnInit {
     //     this.handleGraphicClick(event.graphic);
     //   }
     // });
-
 
     // Add Icon to map
     // const iconGraphic = new Graphic({
@@ -120,15 +141,8 @@ export class GisMapComponent implements OnInit {
     //   graphicsLayer.add(iconGraphic);
     // });
 
-    map.add(graphicsLayer);
-  }
 
-  addClickEventHandler() {
-    this.view.on('click', (event) => {
-
-      console.log('Test');
-
-    });
+    // map.add(graphicsLayer);
   }
 
   onCloseTransaction(): void {
@@ -190,22 +204,5 @@ export class GisMapComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       console.log(resp);
     });
-  }
-
-  customHeader(mapView: MapView) {
-
-
-    document.getElementsByClassName("closeBtn")[0]?.addEventListener('click', () => {
-      console.log('clicking');
-    });
-
-    document.getElementsByClassName("editBtn")[0].addEventListener('click', () => {
-      console.log('clicking');
-    });
-
-    document.getElementById("createMaintainBtn")?.addEventListener('click', () => {
-      console.log('clicking');
-    });
-
   }
 }

@@ -7,12 +7,12 @@
     <form class="flex flex-col w-full" [formGroup]="form">
       <mat-form-field class="flex justify-center">
         <mat-label>Mã User</mat-label>
-        <input matInput formControlName="userId" type="text" />
+        <input  matInput disabled [value]="form.controls.code.value" type="text">
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>User Name</mat-label>
-        <input matInput formControlName="userName" type="text" />
+        <input matInput formControlName="username" type="text" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
@@ -27,7 +27,7 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>SDT</mat-label>
-        <input matInput formControlName="phone" type="tel" />
+        <input matInput formControlName="phoneNumber" type="tel" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
@@ -39,7 +39,7 @@
         <mat-label class="text-base mr-4">Giới tính</mat-label>
         <mat-radio-group formControlName="gender">
           @for (s of genderItems; track $index) {
-          <mat-radio-button [value]="s.value">{{ s.name }}</mat-radio-button>
+            <mat-radio-button [value]="s.value">{{ s.name }}</mat-radio-button>
           }
         </mat-radio-group>
       </div>
@@ -51,7 +51,7 @@
 
       <div>
         <mat-label class="text-base mr-4" >Loại tài khoản</mat-label>
-        <mat-radio-group formControlName="userType">
+        <mat-radio-group formControlName="role">
           @for (i of userTypeItems; track $index) {
           <mat-radio-button [value]="i.value">{{ i.name }}</mat-radio-button>
           }
