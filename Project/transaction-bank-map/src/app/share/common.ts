@@ -42,8 +42,9 @@ export const formatDateTimeFromMilliSecond = (milliseconds: number) => {
   };
 };
 
-export const getDateTimeFromStr = (date: string, time: string) => {
-  const [year, month, day] = date.split('-').map(Number);
+export const getDateTimeFromStr = (date: Date, time: string) => {
   const [hours, minutes] = time.split(':').map(Number);
-  return new Date(year, month - 1, day, hours, minutes);
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  return date;
 };

@@ -26,6 +26,7 @@ import { RouterLink } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MillisecondsToDatePipe } from '../share/pipes/milliseconds-to-date.pipe';
+import { MapNameEnumPipe } from '../share/map-name-enum.pipe';
 
 @Component({
   selector: 'app-transaction-list',
@@ -44,6 +45,7 @@ import { MillisecondsToDatePipe } from '../share/pipes/milliseconds-to-date.pipe
     MatPaginatorModule,
     MillisecondsToDatePipe,
     CurrencyPipe,
+    MapNameEnumPipe,
   ],
   providers: [MaintainTransactionListService],
   templateUrl: './maintain-transaction-list.component.html',
@@ -52,10 +54,11 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = [
     'code',
+    'officeName',
     'maintenanceName',
     'maintenanceDescriptions',
     'maintenanceCost',
-    // 'latestUpdate',
+    'maintenaceStatus',
     'createdAt',
     'createdBy',
     'updatedAt',
@@ -71,10 +74,11 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
   dataSource = signal<MatTableDataSource<MaintainTransaction.Response>>(
     new MatTableDataSource<MaintainTransaction.Response>()
   );
+  status = MaintainTransaction.MaintainItems;
 
   constructor(
-    private _dialog: MatDialog,
-    private _maintainSvc: MaintainTransactionListService
+    private readonly _dialog: MatDialog,
+    private readonly _maintainSvc: MaintainTransactionListService
   ) {}
 
   ngAfterViewInit(): void {}
@@ -138,19 +142,24 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
       );
       dialogRef.afterClosed().subscribe((res) => {
         if (res) {
-          rowData!.code = res.code;
-          rowData!.maintenanceName = res.maintenanceName;
-          rowData!.maintenanceDescriptions = res.maintenanceDescriptions;
-          rowData!.maintenanceCost = res.maintenanceCost;
-          (rowData!.startTime = getDateTimeFromStr(
+          rowData.startTime = getDateTimeFromStr(
             res.startDate,
-            res.starTime
-          ).getTime()),
-            (rowData!.endTime = getDateTimeFromStr(
-              res.endDate,
-              res.endTime
-            ).getTime());
-          this._maintainSvc.update(rowData.id, rowData).subscribe({
+            res.startTime
+          ).getTime();
+          rowData.endTime = getDateTimeFromStr(
+            res.endDate,
+            res.endTime
+          ).getTime();
+          const model : MaintainTransaction.Update = {
+            maintenanceName: res.maintenanceName,
+            maintenanceDescriptions: res.maintenanceDescriptions,
+            maintenanceCost: res.maintenanceCost,
+            maintenaceStatus: rowData.maintenaceStatus,
+            startTime: rowData.startTime,
+            endTime: rowData.endTime,
+            officeId: rowData.officeId
+          }
+          this._maintainSvc.update(rowData.officeId, model).subscribe({
             next: (result) => {
               this.fetchData();
             },

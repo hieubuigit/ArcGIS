@@ -31,6 +31,15 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="officeName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Phòng giao dịch
+      </th>
+      <td mat-cell *matCellDef="let el" class="text-center">
+        {{ el.transactionOffice.officeName }}
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="maintenanceName">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Tên thông tin bảo trì
@@ -50,6 +59,13 @@
         Chi phí của đợt bảo trì
       </th>
       <td mat-cell *matCellDef="let el">{{ el.maintenanceCost | currency: "VND" }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="maintenaceStatus">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Trạng thái
+      </th>
+      <td mat-cell *matCellDef="let el">{{ el.maintenaceStatus | mapNameEnum: status }}</td>
     </ng-container>
 
     <ng-container matColumnDef="status">

@@ -66,16 +66,16 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
       Validators.required,
     ]),
     startTime: ['', [Validators.required]],
-    startDate: ['', [Validators.required]],
+    startDate: this._formBuilder.control<Date>(new Date(), [Validators.required]),
     endTime: ['', [Validators.required]],
-    endDate: ['', [Validators.required]],
+    endDate: this._formBuilder.control<Date>(new Date(), [Validators.required]),
   });
 
   constructor(
-    private _formBuilder: FormBuilder,
-    private router: Router,
-    @Inject(MAT_DIALOG_DATA) private data: any,
-    private _service: MaintainTransactionListService,
+    private readonly _formBuilder: FormBuilder,
+    private readonly router: Router,
+    @Inject(MAT_DIALOG_DATA) private readonly data: any,
+    private readonly _service: MaintainTransactionListService,
     private readonly dialogRef: MatDialogRef<CreateOrUpdateScheduleMaintainPopupComponent>
   ) {}
 
@@ -98,17 +98,17 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
   }
 
   mapFormData(rowData: MaintainTransaction.Response) {
-    const startTime = formatDateTimeFromMilliSecond(rowData.startTime);
-    const endTime = formatDateTimeFromMilliSecond(rowData.endTime);
+    const startDate = new Date(rowData.startTime * 1000);
+    const endDate = new Date(rowData.endTime * 1000);
     this.form.setValue({
       code: rowData.code,
       maintenanceName: rowData.maintenanceName,
       maintenanceDescriptions: rowData.maintenanceDescriptions,
       maintenanceCost: rowData.maintenanceCost,
-      startTime: startTime.time,
-      startDate: startTime.date,
-      endTime: endTime.time,
-      endDate: endTime.date,
+      startTime: `${startDate.getHours()}:${startDate.getMinutes()}`,
+      startDate: startDate,
+      endTime: `${endDate.getHours()}:${endDate.getMinutes()}`,
+      endDate: endDate,
     });
   }
 }

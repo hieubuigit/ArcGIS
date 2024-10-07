@@ -6,7 +6,7 @@ import { environment } from '../../environment/environment';
 
 @Injectable()
 export class MaintainTransactionListService {
-  constructor(private _http: HttpClient) {}
+  constructor(private readonly _http: HttpClient) {}
 
   getPaging(params: Paging) {
     const prQuery = new HttpParams({ fromObject: { ...params } });
@@ -20,7 +20,7 @@ export class MaintainTransactionListService {
     return this._http.post(`${environment.apiUrl}/maintenance`, model);
   }
 
-  update(id: string, model: MaintainTransaction.Response) {
+  update(id: string, model: MaintainTransaction.Update) {
     return this._http.put(`${environment.apiUrl}/maintenance/${id}`, model);
   }
 
