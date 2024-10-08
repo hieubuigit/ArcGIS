@@ -40,12 +40,15 @@ export interface TransactionOffice {
   updatedBy: string;
 }
 
-export interface CustomerOffice {
+export interface OnlyCustomerOffice {
   id: string;
   countCustomer: number;
   countCustomerNow: number;
   officeId: string;
   createdAt: number;
   updatedAt: number | null;
+}
+
+export interface CustomerOffice extends OnlyCustomerOffice {
   transactionOffice: TransactionOffice;
 }

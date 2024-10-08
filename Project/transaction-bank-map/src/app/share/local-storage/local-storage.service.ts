@@ -20,6 +20,10 @@ export class LocalStorageService {
     return JSON.parse(localStorage.getItem(this.currentUserKey) ?? "") as Login.Response;
   }
 
+  clearCurrentUser() {
+    localStorage.removeItem(this.currentUserKey);
+  }
+
   isExistToken() {
     return isAvailable(this.getCurrentUser()?.accessToken ?? false);
   }

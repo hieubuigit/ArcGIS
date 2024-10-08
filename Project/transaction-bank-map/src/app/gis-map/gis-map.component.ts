@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
@@ -21,6 +27,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { MatDividerModule } from '@angular/material/divider';
 import MapView from '@arcgis/core/views/MapView';
+import { TransactionOfficeService } from '../transaction-office/transaction-office.service';
+import { TransactionOffice } from '../transaction-office/transaction-office.model';
 
 @Component({
   selector: 'app-guest-map',
@@ -44,7 +52,6 @@ import MapView from '@arcgis/core/views/MapView';
 export class GisMapComponent implements OnInit {
   userType: UserType = UserType.Admin;
   userTypes = UserType;
-
   view: any = null;
   @ViewChild('mapViewNode', { static: true })
   private readonly mapViewEl!: ElementRef;
@@ -65,18 +72,19 @@ export class GisMapComponent implements OnInit {
   min = this.max - 10;
   step = 1;
   showClosedTransaction: boolean = false;
+  wards = signal<TransactionOffice.Ward[]>([]);
 
   constructor(
     private readonly _dialog: MatDialog,
     private readonly _router: Router,
     private readonly _gisMapSvc: GisMapService,
-    private readonly _ls: LocalStorageService
+    private readonly _ls: LocalStorageService,
+    private readonly _transOffSvc: TransactionOfficeService
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this._ls.isExistToken();
     this.initializeMap();
-
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);
     }
@@ -158,9 +166,25 @@ export class GisMapComponent implements OnInit {
   }
 
   onAddTrans(): void {
-    this._dialog.open(CreateOrUpdateBankBranchPopupComponent, {
-      width: '700px',
-      data: { popupType: PopUpType.Add },
+    const dialogRef = this._dialog.open(
+      CreateOrUpdateBankBranchPopupComponent,
+      {
+        width: '700px',
+        data: { popupType: PopUpType.Add },
+      }
+    );
+    dialogRef.afterClosed().subscribe((value: TransactionOffice.CreateOrUpdate) => {
+      if (value) {
+        value.countEmployee
+        this._transOffSvc.create(value).subscribe({
+          next: (result) => {
+            // Reload map here. show new transaction on map
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
+      }
     });
   }
 
@@ -187,7 +211,7 @@ export class GisMapComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((resp) => {
-      console.log(resp);
+      // Call api update password here
     });
   }
 
@@ -200,9 +224,11 @@ export class GisMapComponent implements OnInit {
         popupType: PopUpType.Logout,
       },
     });
-
     dialogRef.afterClosed().subscribe((resp) => {
-      console.log(resp);
+      if (resp) {
+        this._ls.clearCurrentUser();
+        this._router.navigate(['admin']);
+      }
     });
   }
 }

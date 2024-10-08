@@ -7,36 +7,36 @@
     <form class="flex flex-col w-full" [formGroup]="form">
       <mat-form-field class="flex justify-center">
         <mat-label>Mã PGD</mat-label>
-        <input matInput formControlName="transOfficeCode" type="text" />
+        <input matInput type="text" disabled [value]="form.controls.code.value" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Tên PGD</mat-label>
-        <input matInput formControlName="transOfficeName" type="text" />
+        <input matInput formControlName="officeName" type="text" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Địa chỉ</mat-label>
-        <input matInput formControlName="transAddress" type="text" />
+        <input matInput formControlName="officeAddress" type="text" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Mô tả</mat-label>
-        <textarea matInput formControlName="ward" type="text"></textarea>
+        <textarea matInput formControlName="officeDescriptions" type="text"></textarea>
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Phường</mat-label>
-        <mat-select matNativeControl formControlName="ward">
+        <mat-select matNativeControl formControlName="wardId">
           @for (w of wards(); track $index) {
-          <mat-option [value]="w.value">{{ w.name }}</mat-option>
+          <mat-option [value]="w.id">{{ w.wardName }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
 
       <div>
         <mat-label class="text-base mr-4">Trạng thái</mat-label>
-        <mat-radio-group>
+        <mat-radio-group formControlName="officeStatus">
           @for (s of status; track $index) {
           <mat-radio-button [value]="s.value">{{ s.name }}</mat-radio-button>
           }
@@ -45,22 +45,22 @@
 
       <mat-form-field class="flex justify-center">
         <mat-label>Thời gian hoạt động</mat-label>
-        <input matInput formControlName="uptime" type="text" />
+        <input matInput formControlName="officeUptime" type="text" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Chi phí đầu tư</mat-label>
-        <input matInput formControlName="investmentCost" type="number" />
+        <input matInput formControlName="officeCost" type="number" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Tọa độ X</mat-label>
-        <input matInput formControlName="lat" type="number" />
+        <input matInput formControlName="latitude" type="number" />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
         <mat-label>Tọa độ Y</mat-label>
-        <input matInput formControlName="long" type="number" />
+        <input matInput formControlName="longitude" type="number" />
       </mat-form-field>
     </form>
   </div>

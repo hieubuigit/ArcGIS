@@ -1,14 +1,11 @@
+import { TransactionOffice } from "../transaction-office/transaction-office.model";
+
 export namespace GisMap {
-  export enum Status {
-    BaoTri,
-    HoatDong,
-    DongCua,
-  }
 
   export const StatusList = [
-    { name: 'Bảo trì', value: GisMap.Status.BaoTri },
-    { name: 'Hoạt động', value: GisMap.Status.HoatDong },
-    { name: 'Đóng cửa', value: GisMap.Status.DongCua },
+    { name: 'Bảo trì', value: TransactionOffice.Status.Maintain },
+    { name: 'Hoạt động', value: TransactionOffice.Status.Active },
+    { name: 'Đóng cửa', value: TransactionOffice.Status.Closed },
   ];
 
   export interface TransactionPopUp {

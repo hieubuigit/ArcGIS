@@ -145,11 +145,11 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
           rowData.startTime = getDateTimeFromStr(
             res.startDate,
             res.startTime
-          ).getTime();
+          ).getTime() / 1000;
           rowData.endTime = getDateTimeFromStr(
             res.endDate,
             res.endTime
-          ).getTime();
+          ).getTime() / 1000;
           const model : MaintainTransaction.Update = {
             maintenanceName: res.maintenanceName,
             maintenanceDescriptions: res.maintenanceDescriptions,
@@ -159,7 +159,7 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
             endTime: rowData.endTime,
             officeId: rowData.officeId
           }
-          this._maintainSvc.update(rowData.officeId, model).subscribe({
+          this._maintainSvc.update(rowData.id, model).subscribe({
             next: (result) => {
               this.fetchData();
             },

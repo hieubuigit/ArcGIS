@@ -20,6 +20,9 @@ import {
 import { MatOptionModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 import { PopUpType, SelectItem } from '../../share/common';
+import { TransactionOfficeService } from '../../transaction-office/transaction-office.service';
+import { HttpClientModule } from '@angular/common/http';
+import { TransactionOffice } from '../../transaction-office/transaction-office.model';
 
 @Component({
   selector: 'app-create-or-update-bank-branch-popup',
@@ -40,42 +43,62 @@ import { PopUpType, SelectItem } from '../../share/common';
     MatDialogContent,
     MatDialogModule,
     MatDialogTitle,
+    HttpClientModule,
   ],
+  providers: [TransactionOfficeService],
   templateUrl: './create-or-update-bank-branch-popup.component.html',
 })
 export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
   form = this._formBuilder.group({
-    transOfficeCode: ['', Validators.required],
-    transOfficeName: ['', Validators.required],
-    transAddress: ['', [Validators.required]],
-    description: ['', [Validators.required]],
-    ward: ['', [Validators.required]],
-    status: [0, [Validators.required]],
-    uptime: ['', [Validators.required]],
-    investmentCost: ['', [Validators.required]],
-    lat: ['', [Validators.required]],
-    long: ['', [Validators.required]],
+    code: ['', Validators.required],
+    officeName: ['', Validators.required],
+    officeAddress: ['', [Validators.required]],
+    officeDescriptions: ['', [Validators.required]],
+    wardId: [null, [Validators.required]],
+    officeStatus: [null, [Validators.required]],
+    officeUptime: ['', [Validators.required]],
+    officeCost: [null, [Validators.required]],
+    latitude: [null, [Validators.required]],
+    longitude: [null, [Validators.required]],
   });
   popupType: PopUpType = PopUpType.Add;
   popupTypes = PopUpType;
   status = GisMap.StatusList;
-  wards = signal<SelectItem<number>[]>([]);
+  wards = signal<TransactionOffice.Ward[]>([]);
 
   constructor(
-    private _formBuilder: FormBuilder,
+    private readonly _formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CreateOrUpdateBankBranchPopupComponent>
+    private readonly dialogRef: MatDialogRef<CreateOrUpdateBankBranchPopupComponent>,
+    private readonly _transOffSvc: TransactionOfficeService
   ) {}
 
   ngOnInit(): void {
     if (this.data) {
       this.popupType = this.data.popupType;
     }
+    this.fetchWardData();
+    this.getCode();
+  }
+
+  fetchWardData() {
+    this._transOffSvc.getWard().subscribe({
+      next: (result) => {
+        this.wards.set(result.data.ward);
+      },
+      error: (err) => {},
+    });
+  }
+
+  getCode() {
+    this._transOffSvc.getCode().subscribe({
+      next: (result) => {
+        this.form.controls.code.setValue(result.data);
+      },
+    });
   }
 
   onSave() {
     this.dialogRef.close(this.form.getRawValue());
   }
-
-  fetchWardData() {}
 }
