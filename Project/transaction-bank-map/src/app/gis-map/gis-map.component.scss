@@ -1,0 +1,26 @@
+#mapContainer {
+  max-height: 92vh;
+}
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.close-btn,
+.edit-btn,
+.create-maintain-btn {
+  width: 100px;
+  height: 20px;
+}
+
+.close-btn {
+  background-color: red;
+}
+
+.edit-btn {
+  background-color: green;
+}
+
+.create-maintain-btn {
+  background-color: blue;
+}

@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewChecked,
+  AfterViewInit,
   Component,
   ElementRef,
   OnInit,
@@ -29,6 +31,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import MapView from '@arcgis/core/views/MapView';
 import { TransactionOfficeService } from '../transaction-office/transaction-office.service';
 import { TransactionOffice } from '../transaction-office/transaction-office.model';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-guest-map',
@@ -45,14 +48,16 @@ import { TransactionOffice } from '../transaction-office/transaction-office.mode
     MatSliderModule,
     FormsModule,
     MatDividerModule,
+    HttpClientModule,
   ],
-  providers: [GisMapService, LocalStorageService],
+  providers: [GisMapService, LocalStorageService, TransactionOfficeService],
   templateUrl: './gis-map.component.html',
+  styleUrl: './gis-map.component.scss',
 })
-export class GisMapComponent implements OnInit {
+export class GisMapComponent implements OnInit, AfterViewInit {
   userType: UserType = UserType.Admin;
   userTypes = UserType;
-  view: any = null;
+  view!: MapView;
   @ViewChild('mapViewNode', { static: true })
   private readonly mapViewEl!: ElementRef;
 
@@ -84,52 +89,40 @@ export class GisMapComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin = this._ls.isExistToken();
-    this.initializeMap();
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);
     }
   }
 
-  private initializeMap() {
-    const container = this.mapViewEl.nativeElement;
+  ngAfterViewInit(): void {
+    this.initializeMap();
+  }
 
-    // // Create map
+  private initializeMap() {
     const map = new Map({
       basemap: 'topo-vector',
     });
 
     // Create a new MapView
-    // this.view = new MapView({
-    //   container,
-    //   map: map,
-    //   center: [106.703362, 10.776971],
-    //   zoom: 14,
-    //   highlightOptions: {
-    //     color: new Color([255, 0, 0, 0.5]),
-    //   },
-    // });
+    this.view = new MapView({
+      container: 'mapView',
+      map: map,
+      center: [106.703362, 10.776971],
+      zoom: 14,
+    });
 
-    console.log('✅ Map initialized successfully.');
-
-    // const graphicsLayer = new GraphicsLayer();
-    // this._gisMapSvc.getPolygons().forEach((data) => {
-    //   graphicsLayer.add(this._gisMapSvc.createGraphic(data));
-    // });
+    const graphicsLayer = new GraphicsLayer();
+    this._gisMapSvc.getPolygons().forEach((data) => {
+      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    });
 
     // this._gisMapSvc.getLines().forEach((data) => {
     //   graphicsLayer.add(this._gisMapSvc.createGraphic(data));
     // });
 
-    // this._gisMapSvc.getPoints().forEach((data) => {
-    //   graphicsLayer.add(this._gisMapSvc.createGraphic(data));
-    // });
-
-    // Handle click events on the graphics layer
-    // graphicsLayer.on('click', (event) => {
-    //   if (event.graphic) { // Check if a graphic was clicked
-    //     this.handleGraphicClick(event.graphic);
-    //   }
-    // });
+    this._gisMapSvc.getPoints().forEach((data) => {
+      graphicsLayer.add(this._gisMapSvc.createGraphic(data));
+    });
 
     // Add Icon to map
     // const iconGraphic = new Graphic({
@@ -150,14 +143,60 @@ export class GisMapComponent implements OnInit {
     //   graphicsLayer.add(iconGraphic);
     // });
 
-    // map.add(graphicsLayer);
+    map.add(graphicsLayer);
+
+    // Click event to show the popup
+    this.view.when(() => {
+      this.view.on('click', (event) => {
+        this.view.hitTest(event).then((response) => {
+          if (response.results.length > 0) {
+            const graphic = (response.results[0] as any)?.graphic;
+            if (graphic) {
+              this.onEditButton();
+            }
+          }
+        });
+      });
+    });
+  }
+
+  private onEditButton() {
+    setTimeout(() => {
+
+      const content = this.view.popup.viewModel.content;
+      // console.log(content);
+      debugger
+
+      if (typeof content === 'string') {
+        // const button = (content as HTMLElement).querySelector('#edit-trans-btn');
+        // console.log(button);
+
+        const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+
+            // Now we can use querySelector on the temporary div
+            const editButton = tempDiv.querySelector('#edit-trans-btn');
+            if (editButton) {
+                editButton.addEventListener('click', () => {
+                    alert('Edit button clicked!'); // Handle the button click
+                    this.view.popup.close(); // Optionally close the popup
+                });
+            }
+
+        // if (button) {
+        //   button.addEventListener('click', () => {
+        //     console.log('hello');
+        //   });
+        // }
+      }
+    }, 0);
   }
 
   onCloseTransaction(): void {
     this._dialog.open(ConfirmComponent, {
       width: '700px',
       data: {
-        title: `Bạn có chắc chắn muốn phòng giao dịch này không? `,
+        title: `Bạn có chắc chắn muốn đóng phòng giao dịch này không? `,
         content:
           'Hành động này không thể hoàn tác.PGD sẽ bị xóa ra khỏi hệ thống vĩnh viễn.',
         popupType: PopUpType.Delete,
@@ -173,19 +212,21 @@ export class GisMapComponent implements OnInit {
         data: { popupType: PopUpType.Add },
       }
     );
-    dialogRef.afterClosed().subscribe((value: TransactionOffice.CreateOrUpdate) => {
-      if (value) {
-        value.countEmployee
-        this._transOffSvc.create(value).subscribe({
-          next: (result) => {
-            // Reload map here. show new transaction on map
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .subscribe((value: TransactionOffice.CreateOrUpdate) => {
+        if (value) {
+          value.countEmployee;
+          this._transOffSvc.create(value).subscribe({
+            next: (result) => {
+              // Reload map here. show new transaction on map
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
+        }
+      });
   }
 
   maintainList() {

@@ -5,7 +5,6 @@ import { ForgotPasswordComponent } from './user-authentication/forgot-password/f
 import { MaintainTransactionListComponent } from './maintain-transaction-list/maintain-transaction-list.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { TransactionManagementComponent } from './transaction-management/transaction-management.component';
-import { GisMapComponent } from './gis-map/gis-map.component';
 import { userAuthenticationGuard } from './share/authentication/user-authentication.guard';
 
 export const routes: Routes = [
@@ -16,7 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'guest-map',
-    component: GisMapComponent,
+    loadComponent: () => import('./gis-map/gis-map.component').then(m => m.GisMapComponent),
   },
   {
     path: 'admin',

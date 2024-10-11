@@ -20,6 +20,7 @@ export class MapInfoPopupComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
   }
 
 }

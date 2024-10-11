@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LocalStorageService } from './share/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-root',

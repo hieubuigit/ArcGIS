@@ -37,6 +37,11 @@ export class GisMapService {
         <strong>Lần bảo trì gần nhất: </strong> <span>{latestMaintain}</span>
       </div>
     </div>
+    <div class="popup-buttons" style="display: flex; justify-content: end; margin: 10px 0px;">
+      <div id="close-btn" style="background-color: red; color: white; padding: 5px; margin: 0 5px; border-radius: 50px; border: 1px solid red; cursor: pointer; ">Đóng PGD</div>
+      <div id="edit-trans-btn" style="background-color: blue; color: white; padding: 5px; margin: 0 5px; border-radius: 50px; cursor: pointer; ">Sửa thông tin</div>
+      <div id="create-maintain-btn" style="background-color: green; color: white; padding: 5px; margin: 0 5px; border-radius: 50px; cursor: pointer; ">Lên lịch bảo trì</div>
+    </div>
     </div>
     `,
   };
@@ -251,38 +256,7 @@ export class GisMapService {
           },
         },
         attributes: this.transPopup,
-      },
-      {
-        type: 'point',
-        latitude: points.DinhDocLap[0],
-        longitude: points.DinhDocLap[1],
-        Name: 'Dinh Độc Lập',
-        Location: 'Dinh Độc Lập',
-        symbol: {
-          type: 'simple-marker',
-          color: [0, 255, 51],
-          outline: {
-            color: [0, 255, 51],
-            width: 4,
-          },
-        },
-        attributes: this.transPopup,
-      },
-      {
-        type: 'point',
-        latitude: points.ThapCham[0],
-        longitude: points.ThapCham[1],
-        Name: 'Tháp Chàm',
-        Location: 'Tháp Chàm',
-        symbol: {
-          type: 'simple-marker',
-          color: [2, 31, 247],
-          outline: {
-            color: [2, 31, 247],
-            width: 2,
-          },
-        },
-        attributes: this.transPopup,
+        popupTemplate: this.pointTemplate,
       },
     ];
   }
