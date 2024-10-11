@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoadingService } from './loading.service';
 
 @Component({
   selector: 'app-spinner',
   standalone: true,
   imports: [MatProgressSpinnerModule],
   templateUrl: './spinner.component.html',
+  providers: [LoadingService],
   styles: `
     .spinner-overlay {
     position: fixed;
@@ -22,7 +24,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   `,
 })
 export class SpinnerComponent {
-  isLoading = false;
+  isLoading = true;
+  constructor(private loadingService: LoadingService){
+    this.loadingService.loading$.subscribe(loading => {
+      setTimeout(() => {
+        this.isLoading = loading;
+      }, 1000);
+    });
+  }
 
   show() {
     this.isLoading = true;
