@@ -29,6 +29,10 @@ export interface ResponseApi<T> {
 export const isAvailable = (value: any): boolean =>
   value !== null && value !== undefined && value !== '';
 
+
+/**
+ * Format datetime
+ */
 export const formatDateTimeFromMilliSecond = (milliseconds: number) => {
   const date = new Date(milliseconds * 1000);
   const year = date.getFullYear();
@@ -48,3 +52,29 @@ export const getDateTimeFromStr = (date: Date, time: string) => {
   date.setMinutes(minutes);
   return date;
 };
+
+
+/***
+ * Format currency
+ */
+ export const formatCurrency = (value: number, country: string) => {
+    // Create a currency formatter based on the provided country
+    const formatter = new Intl.NumberFormat(country, {
+      style: 'currency',
+      currency: getCurrencyCode(country)
+    });
+    return formatter.format(value);
+  }
+
+  const getCurrencyCode = (country: string) => {
+    const currencyMap: { [key: string]: string } = {
+      'US': 'USD',
+      'VN': 'VND',
+      'GB': 'GBP',
+      'EU': 'EUR',
+    };
+    return currencyMap[country] || 'USD';
+  }
+
+
+

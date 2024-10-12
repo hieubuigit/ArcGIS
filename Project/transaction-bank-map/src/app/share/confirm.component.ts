@@ -52,9 +52,11 @@ export class ConfirmComponent implements OnInit {
     this.content = this.data.content;
   }
 
-  onCancel() {}
+  onCancel() {
+    this.dialogRef.close(false);
+  }
 
   onAccept() {
-    this.dialogRef.close(false);
+    this.dialogRef.close(true);
   }
 }

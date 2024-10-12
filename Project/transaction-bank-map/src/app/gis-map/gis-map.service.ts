@@ -1,72 +1,20 @@
-import { Injectable } from '@angular/core';
-import {
-  district1Geo,
-  points,
-  streets,
-  transactionBankGeos,
-  wardsGeo,
-} from '../share/geo-info';
+import { inject, Injectable } from '@angular/core';
+import { district1Geo, streets, transactionBankGeos } from '../share/geo-info';
 import Graphic from '@arcgis/core/Graphic';
 import { GisMap } from './gis-map.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { formatCurrency, formatDateTimeFromMilliSecond } from '../share/common';
+import { TransactionOffice } from '../transaction-office/transaction-office.model';
+import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
+import Point from '@arcgis/core/geometry/Point';
+import { environment } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GisMapService {
-  readonly pointTemplate = {
-    title: '<div style="font-weight:700;">{name}</div>',
-    content: `
-    <div class="container">
-    <div class="flex flex-col items-start">
-      <div class="field">
-        <strong>Trạng thái:</strong> <span>{status}</span>
-      </div>
-      <div class="field">
-        <strong>Thời gian hoạt động:</strong> <span>{upTime}</span>
-      </div>
-      <div class="field">
-        <strong>Số lượng khách hàng: </strong> <span>{customerQty}</span>
-      </div>
-      <div class="field">
-        <strong>Số lượng nhân viên: </strong> <span>{employeeQty}</span>
-      </div>
-      <div class="field">
-        <strong>Tổng chi phí: </strong> <span>{totalCost} VND</span>
-      </div>
-      <div class="field">
-        <strong>Lần bảo trì gần nhất: </strong> <span>{latestMaintain}</span>
-      </div>
-    </div>
-    <div class="popup-buttons" style="display: flex; justify-content: end; margin: 10px 0px;">
-      <div id="close-btn" style="background-color: red; color: white; padding: 5px; margin: 0 5px; border-radius: 50px; border: 1px solid red; cursor: pointer; ">Đóng PGD</div>
-      <div id="edit-trans-btn" style="background-color: blue; color: white; padding: 5px; margin: 0 5px; border-radius: 50px; cursor: pointer; ">Sửa thông tin</div>
-      <div id="create-maintain-btn" style="background-color: green; color: white; padding: 5px; margin: 0 5px; border-radius: 50px; cursor: pointer; ">Lên lịch bảo trì</div>
-    </div>
-    </div>
-    `,
-  };
-
-  transPopup: GisMap.TransactionPopUp = {
-    name: 'PGD-01',
-    status: 'Đang hoạt động',
-    upTime: '12:00 AM - 17:00 PM',
-    customerQty: 100,
-    employeeQty: 10,
-    totalCost: 1000,
-    latestMaintain: '2024-09-24',
-  };
-
+  private readonly _http = inject(HttpClient);
   constructor() {}
-
-  fetchPolygons() {
-    // call api here
-  }
-  fetchLines() {
-    // call api here
-  }
-  fetchPoints() {
-    // call api here
-  }
 
   createGraphic = (data: any) =>
     new Graphic({
@@ -76,189 +24,164 @@ export class GisMapService {
       popupTemplate: data.popupTemplate,
     });
 
-  getPolygons() {
-    return [
-      {
-        type: 'polygon',
-        rings: wardsGeo.TanDinh,
-        Name: 'Phường Tân Định',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [227, 139, 79, 0.4],
-          outline: {
-            color: [255, 255, 255],
-            width: 1,
+  createPolygons(data: TransactionOffice.WardResponse) {
+    let polygonConfigs: any = [];
+    if (data.ward.length) {
+      data.ward.forEach((w) => {
+        const rings = JSON.parse(w.polygon);
+        polygonConfigs.push({
+          type: 'polygon',
+          rings: rings,
+          Name: w.wardName,
+          Location: '',
+          symbol: {
+            type: 'simple-fill',
+            color: [248, 250, 193, 0.25],
+            outline: {
+              color: [27, 99, 42, 0.7],
+              width: 1,
+            },
           },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.DaKao,
-        Name: 'Phường Đa Kao',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [0, 153, 0, 0.4],
-          outline: {
-            color: [25555255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.BenNghe,
-        Name: 'Phường Bến Nghé',
-        Location: 'Phường Bến Nghé',
-        symbol: {
-          type: 'simple-fill',
-          color: [145, 145, 145, 0.4],
-          outline: {
-            color: [255, 255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.BenThanh,
-        Name: 'Phường Bến Thành',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [201, 79, 183, 0.4],
-          outline: {
-            color: [2551, 255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.NguyeThaiBinh,
-        Name: 'Phường Nguyễn Thái Bình',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [0, 247, 255, 0.4],
-          outline: {
-            color: [2551, 255, 255, 0],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.PhamNguLao,
-        Name: 'Phường Phạm Ngũ Lão',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [255, 157, 0, 0.4],
-          outline: {
-            color: [25555255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.CauOngLanh,
-        Name: 'Phường Cầu Ông Lãnh',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [51, 102, 255, 0.4],
-          outline: {
-            color: [2557, 255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.CoGiang,
-        Name: 'Phường Cô Giang',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [255, 251, 5, 0.4],
-          outline: {
-            color: [2551, 255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.NguyenCuTrinh,
-        Name: 'Phường Nguyễn Cư Trinh',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [252, 0, 84, 0.4],
-          outline: {
-            color: [255, 255, 255],
-            width: 1,
-          },
-        },
-      },
-      {
-        type: 'polygon',
-        rings: wardsGeo.CauKho,
-        Name: 'Phường Cầu Kho',
-        Location: '',
-        symbol: {
-          type: 'simple-fill',
-          color: [255, 135, 163, 0.4],
-          outline: {
-            color: [2551, 255, 255],
-            width: 1,
-          },
-        },
-      },
-    ];
+        });
+      });
+      return polygonConfigs;
+    }
   }
 
-  getLines() {
+  redirectToBank(params: GisMap.RedirectRequest) {
+    const prQuery = new HttpParams({ fromObject: { ...params } });
+    return this._http.get<any>(`${environment.apiUrl}/ward/map/direction`, {params: prQuery});
+  }
+
+  createLines(data: any) {
     return [
       {
         type: 'polyline',
-        paths: district1Geo,
+        paths: data,
         symbol: {
           type: 'simple-line',
-          color: [226, 119, 40], // orange
-          width: 2,
+          color: [8, 79, 247],
+          width: 3,
         },
         Name: 'Quận 1',
         Location: 'Tp. Hồ Chí Minh',
-        // popupTemplate: this.point_template_area,
       },
-      ...streets,
     ];
   }
 
-  getPoints() {
-    return [
-      {
-        type: 'point',
-        latitude: points.DenGiaoThong[0],
-        longitude: points.DenGiaoThong[1],
-        Name: 'Đèn giao thông 1',
-        Location: 'ở quận 1., TPHCM',
-        symbol: {
-          type: 'simple-marker',
-          color: [255, 0, 0],
-          outline: {
-            color: [255, 0, 0],
-            width: 2,
-          },
+  createPoints(data: TransactionOffice.CreateOrUpdate[]) {
+    let points: any = [];
+    if (data.length > 0) {
+      data.forEach((item) => {
+        const transOffStatus = TransactionOffice.transStatusInfo.find(
+          (i) => i.value === Number(item.officeStatus)
+        );
+
+        let imageStatus: string = 'assets/bank.png';
+        if (Number(item.officeStatus) === TransactionOffice.Status.Maintain) {
+          imageStatus = 'assets/bank-gray.png';
+        } else if (
+          Number(item.officeStatus) === TransactionOffice.Status.Closed
+        ) {
+          imageStatus = 'assets/bank-black.png';
+        } else if (item.countCustomer <= 10) {
+          imageStatus = 'assets/bank-green.png';
+        } else if (item.countCustomer > 10 && item.countCustomer < 20) {
+          imageStatus = 'assets/bank-orange.png';
+        } else if (item.countCustomer > 20) {
+          imageStatus = 'assets/bank-red.png';
+        }
+
+        const attributePopup: GisMap.TransactionPopUp = {
+          name: item.officeName,
+          status: transOffStatus?.name ?? '',
+          upTime: item.officeUptime,
+          customerQty: item.countCustomer ?? 0,
+          employeeQty: item.countEmployee ?? 0,
+          totalCost: formatCurrency(item.officeCost, 'VN'),
+          latestMaintain:
+            formatDateTimeFromMilliSecond(item.latestMaintain).date ?? '',
+        };
+
+        const iconSymbol = new PictureMarkerSymbol({
+          url: imageStatus,
+          width: '30px',
+          height: '30px',
+        });
+
+        points.push({
+          type: 'point',
+          latitude: item.latitude,
+          longitude: item.longitude,
+          Name: item.officeName,
+          Location: item.officeAddress,
+          symbol: iconSymbol,
+          attributes: attributePopup,
+          popupTemplate: this.createPointTemplate(item),
+        });
+      });
+    }
+    return points;
+  }
+
+  createPointTemplate(item: TransactionOffice.CreateOrUpdate) {
+    return {
+      title: '<div style="font-weight:700;">{name}</div>',
+      content: `
+        <div class="container">
+        <div class="flex flex-col items-start">
+          <div class="field">
+            <strong>Trạng thái:</strong> <span>{status}</span>
+          </div>
+          <div class="field">
+            <strong>Thời gian hoạt động:</strong> <span>{upTime}</span>
+          </div>
+          <div class="field">
+            <strong>Số lượng khách hàng: </strong> <span>{customerQty}</span>
+          </div>
+          <div class="field">
+            <strong>Số lượng nhân viên: </strong> <span>{employeeQty}</span>
+          </div>
+          <div class="field">
+            <strong>Tổng chi phí: </strong> <span>{totalCost}</span>
+          </div>
+          <div class="field">
+            <strong>Lần bảo trì gần nhất: </strong> <span>{latestMaintain}</span>
+          </div>
+        </div>
+        </div>
+      `,
+      actions: [
+        {
+          id: 'close',
+          type: 'button',
+          title: 'Đóng PGD',
+          image: 'assets/close.png',
+          className: item.id,
         },
-        attributes: this.transPopup,
-        popupTemplate: this.pointTemplate,
-      },
-    ];
+        {
+          id: 'edit',
+          type: 'button',
+          title: 'Sửa thông tin',
+          image: 'assets/pen.png',
+          className: item.id,
+        },
+        {
+          id: 'maintain',
+          type: 'button',
+          title: 'Lên lịch bảo trì',
+          image: 'assets/repair-service.png',
+          className: item.id,
+        },
+        {
+          id: 'direction',
+          type: 'button',
+          title: 'Đến dây',
+          image: 'assets/gps.png',
+          className: {latitude: item.latitude, longitude: item.longitude},
+        }
+      ],
+    };
   }
 
   addTransactionBankGeos() {
@@ -295,4 +218,5 @@ export class GisMapService {
     });
     return transactionPoints;
   }
+
 }

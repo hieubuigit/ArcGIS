@@ -1,0 +1,30 @@
+@import '~@angular/material/theming';
+
+// Include the common styles for Angular Material.
+@include mat-core();
+
+// Define your custom primary and accent colors.
+$custom-primary: mat-palette($mat-indigo);
+$custom-accent: mat-palette($mat-pink);
+$custom-warn: mat-palette($mat-red);
+
+// Create the theme using the custom palettes.
+$custom-theme: mat-light-theme((
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn,
+  ),
+));
+
+// Include Angular Material styles.
+@include angular-material-theme($custom-theme);
+
+// Custom styles for the button
+.mat-button {
+  background-color: green;
+  color: white;
+  &:hover {
+    background-color: rgb(0, 94, 0);
+  }
+}

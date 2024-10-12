@@ -14,7 +14,7 @@ export namespace GisMap {
     upTime: string,
     customerQty: number,
     employeeQty: number,
-    totalCost: number,
+    totalCost: string,
     latestMaintain: string,
    }
 
@@ -26,6 +26,16 @@ export namespace GisMap {
     year: number,
     showCloseTransaction: boolean,
     showWard: boolean,
+  }
+
+  export interface APoint {
+    latitude: number;
+    longitude: number;
+  }
+
+  export interface RedirectRequest {
+    origin: string;
+    destination: string;
   }
 }
 

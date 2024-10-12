@@ -2,7 +2,7 @@
   <div class="text-2xl font-bold">Quản Lý PGD Ngân Hàng VietcomBank</div>
   @if (isAdmin) {
   <div class="buttons flex justify-around">
-    <button class="mx-1" mat-flat-button type="button" (click)="onAddTrans()">
+    <button class="mx-1" mat-flat-button type="button" color="primary" (click)="onAddTrans()">
       Thêm PGD
     </button>
     <button class="mx-1" mat-flat-button type="button" (click)="maintainList()">
@@ -52,8 +52,14 @@
         <input matSliderThumb [(ngModel)]="chooseYear" #slider>
       </mat-slider>
       <section class="">
-        <mat-checkbox [(ngModel)]="showClosedTransaction">Hiển thị PGD đóng cửa</mat-checkbox>
+        <mat-checkbox [(ngModel)]="showClosedTransaction" (change)="onShowClosed($event)">Hiển thị PGD đóng cửa</mat-checkbox>
       </section>
     </div>
   </div>
 </div>
+
+@if (isShowRedirect) {
+  <div class="absolute bottom-3 left-3 bg-blue-400 rounded-full w-12 h-11 pt-2 border border-solid text-center" (click)="onDirection()">
+    <mat-icon>location_on</mat-icon>
+  </div>
+}

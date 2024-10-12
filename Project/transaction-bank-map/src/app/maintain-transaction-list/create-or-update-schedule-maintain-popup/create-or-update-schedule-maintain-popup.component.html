@@ -67,7 +67,7 @@
 <div mat-dialog-actions>
   <div class="flex justify-end p-2">
     <button mat-stroked-button mat-dialog-close class="mx-2">Huỷ</button>
-    <button mat-flat-button (click)="onSave()">
+    <button mat-flat-button [disabled]="form.invalid" (click)="onSave()">
       @if(popupType === popupTypes.Add) { Thêm } @else { Cập Nhật }
     </button>
   </div>

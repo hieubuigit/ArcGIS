@@ -1,4 +1,3 @@
-import { GisMap } from '../gis-map/gis-map.model';
 import { Paging, SelectItem } from '../share/common';
 import { TransactionOffice } from '../transaction-management/transaction-management.model';
 

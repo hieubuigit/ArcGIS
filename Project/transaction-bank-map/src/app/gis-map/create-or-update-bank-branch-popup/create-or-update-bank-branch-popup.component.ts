@@ -19,7 +19,7 @@ import {
 } from '@angular/material/dialog';
 import { MatOptionModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
-import { PopUpType, SelectItem } from '../../share/common';
+import { PopUpType } from '../../share/common';
 import { TransactionOfficeService } from '../../transaction-office/transaction-office.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TransactionOffice } from '../../transaction-office/transaction-office.model';
@@ -54,12 +54,22 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
     officeName: ['', Validators.required],
     officeAddress: ['', [Validators.required]],
     officeDescriptions: ['', [Validators.required]],
-    wardId: [null, [Validators.required]],
-    officeStatus: [null, [Validators.required]],
+    wardId: this._formBuilder.control<null | string>(null, [
+      Validators.required,
+    ]),
+    officeStatus: this._formBuilder.control<null | number>(null, [
+      Validators.required,
+    ]),
     officeUptime: ['', [Validators.required]],
-    officeCost: [null, [Validators.required]],
-    latitude: [null, [Validators.required]],
-    longitude: [null, [Validators.required]],
+    officeCost: this._formBuilder.control<null | number>(null, [
+      Validators.required,
+    ]),
+    latitude: this._formBuilder.control<null | number>(null, [
+      Validators.required,
+    ]),
+    longitude: this._formBuilder.control<null | number>(null, [
+      Validators.required,
+    ]),
   });
   popupType: PopUpType = PopUpType.Add;
   popupTypes = PopUpType;
@@ -74,11 +84,18 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.data) {
-      this.popupType = this.data.popupType;
-    }
     this.fetchWardData();
-    this.getCode();
+    if (this.data) {
+      console.log(this.data);
+
+      this.popupType = this.data.popupType;
+      if (this.data.popupType === PopUpType.Add) {
+        this.getCode();
+      }
+      if (this.data.popupType === PopUpType.Update && this.data.rowData) {
+        this.mapFormData(this.data.rowData);
+      }
+    }
   }
 
   fetchWardData() {
@@ -99,6 +116,22 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
   }
 
   onSave() {
+    console.log(this.form.getRawValue());
     this.dialogRef.close(this.form.getRawValue());
+  }
+
+  mapFormData(rowData: TransactionOffice.CreateOrUpdate) {
+    this.form.setValue({
+      code: rowData.code,
+      officeName: rowData.officeName,
+      officeAddress: rowData.officeAddress,
+      officeDescriptions: rowData.officeDescriptions,
+      wardId: rowData.wardId ?? '',
+      officeStatus: Number(rowData.officeStatus),
+      officeUptime: rowData.officeUptime,
+      officeCost: rowData.officeCost,
+      latitude: rowData.latitude,
+      longitude: rowData.longitude,
+    });
   }
 }
