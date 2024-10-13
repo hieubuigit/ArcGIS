@@ -138,37 +138,52 @@ export class GisMapService {
     item: TransactionOffice.CreateOrUpdate,
     isAdmin: boolean = true
   ) {
-    const actions = [
-      {
-        id: 'close',
-        type: 'button',
-        title: 'Đóng PGD',
-        image: 'assets/close.png',
-        className: item.id,
-      },
-      {
-        id: 'edit',
-        type: 'button',
-        title: 'Sửa thông tin',
-        image: 'assets/pen.png',
-        className: item.id,
-      },
-      {
-        id: 'maintain',
-        type: 'button',
-        title: 'Lên lịch bảo trì',
-        image: 'assets/repair-service.png',
-        className: item.id,
-      },
-    ];
+    let actions: any = [];
     if (isAdmin) {
-      actions.push({
-        id: 'direction',
-        type: 'button',
-        title: 'Đến dây',
-        image: 'assets/gps.png',
-        className: ({ latitude: item.latitude, longitude: item.longitude } as Point).toString(),
-      });
+      actions = [
+        {
+          id: 'close',
+          type: 'button',
+          title: 'Đóng PGD',
+          image: 'assets/close.png',
+          className: item.id,
+        },
+        {
+          id: 'edit',
+          type: 'button',
+          title: 'Sửa thông tin',
+          image: 'assets/pen.png',
+          className: item.id,
+        },
+        {
+          id: 'maintain',
+          type: 'button',
+          title: 'Lên lịch bảo trì',
+          image: 'assets/repair-service.png',
+          className: item.id,
+        },
+        {
+          id: 'direction',
+          type: 'button',
+          title: 'Đến dây',
+          image: 'assets/gps.png',
+          className: (
+            { latitude: item.latitude, longitude: item.longitude } as Point
+          ).toString(),
+        },
+      ];
+    } else {
+      actions = [
+        {
+          id: 'direction',
+          type: 'button',
+          title: 'Đến dây',
+          image: 'assets/gps.png',
+          className: (
+            { latitude: item.latitude, longitude: item.longitude } as Point
+          ).toString(),
+        },
+      ];
     }
 
     return {
