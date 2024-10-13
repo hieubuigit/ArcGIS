@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { formatDateTimeFromMilliSecond, PopUpType } from '../../share/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MaintainTransactionListService } from '../maintain-transaction-list.service';
@@ -61,6 +61,7 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
   form = this._formBuilder.group({
     code: ['', Validators.required],
     maintenanceName: ['', Validators.required],
+    maintenaceStatus: this._formBuilder.control<null | string | MaintainTransaction.MaintainStatus>(null, [Validators.required]),
     maintenanceDescriptions: ['', [Validators.required]],
     maintenanceCost: this._formBuilder.control<null | number>(null, [
       Validators.required,
@@ -71,12 +72,12 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
     endDate: this._formBuilder.control<Date>(new Date(), [Validators.required]),
   });
 
+  status = MaintainTransaction.MaintainItems;
+
   constructor(
     private readonly _formBuilder: FormBuilder,
-    private readonly router: Router,
     @Inject(MAT_DIALOG_DATA) private readonly data: any,
-    private readonly _service: MaintainTransactionListService,
-    private readonly dialogRef: MatDialogRef<CreateOrUpdateScheduleMaintainPopupComponent>
+    private readonly dialogRef: MatDialogRef<CreateOrUpdateScheduleMaintainPopupComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -100,14 +101,17 @@ export class CreateOrUpdateScheduleMaintainPopupComponent implements OnInit {
   mapFormData(rowData: MaintainTransaction.Response) {
     const startDate = new Date(rowData.startTime * 1000);
     const endDate = new Date(rowData.endTime * 1000);
+    const startTime = formatDateTimeFromMilliSecond(rowData.startTime);
+    const endTime = formatDateTimeFromMilliSecond(rowData.endTime);
     this.form.setValue({
       code: rowData.code,
       maintenanceName: rowData.maintenanceName,
+      maintenaceStatus: Number(rowData.maintenaceStatus),
       maintenanceDescriptions: rowData.maintenanceDescriptions,
       maintenanceCost: rowData.maintenanceCost,
-      startTime: `${startDate.getHours()}:${startDate.getMinutes()}`,
+      startTime: startTime.time,
       startDate: startDate,
-      endTime: `${endDate.getHours()}:${endDate.getMinutes()}`,
+      endTime: endTime.time,
       endDate: endDate,
     });
   }

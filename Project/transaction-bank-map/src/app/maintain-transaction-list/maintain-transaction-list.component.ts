@@ -27,6 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MillisecondsToDatePipe } from '../share/pipes/milliseconds-to-date.pipe';
 import { MapNameEnumPipe } from '../share/map-name-enum.pipe';
+import { SpinnerComponent } from '../share/ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-transaction-list',
@@ -46,6 +47,7 @@ import { MapNameEnumPipe } from '../share/map-name-enum.pipe';
     MillisecondsToDatePipe,
     CurrencyPipe,
     MapNameEnumPipe,
+    SpinnerComponent,
   ],
   providers: [MaintainTransactionListService],
   templateUrl: './maintain-transaction-list.component.html',
@@ -78,10 +80,13 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private readonly _dialog: MatDialog,
-    private readonly _maintainSvc: MaintainTransactionListService
+    private readonly _maintainSvc: MaintainTransactionListService,
   ) {}
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void {
+    this.dataSource().paginator = this.paginator;
+    this.dataSource().sort = this.sort;
+  }
 
   ngOnInit(): void {
     this.fetchData();
@@ -92,7 +97,6 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
     this._maintainSvc.getPaging(this.paging).subscribe({
       next: (resp) => {
         this.dataSource.set(new MatTableDataSource(resp.data.maintenances));
-        this.dataSource().paginator = this.paginator;
         this.isLoadingResults = false;
       },
       error: (err) => {
@@ -119,7 +123,6 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
                   this.fetchData();
                 },
                 error: (err) => {
-                  console.log(err);
                 },
               });
             }
@@ -142,29 +145,24 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
       );
       dialogRef.afterClosed().subscribe((res) => {
         if (res) {
-          rowData.startTime = getDateTimeFromStr(
-            res.startDate,
-            res.startTime
-          ).getTime() / 1000;
-          rowData.endTime = getDateTimeFromStr(
-            res.endDate,
-            res.endTime
-          ).getTime() / 1000;
-          const model : MaintainTransaction.Update = {
+          rowData.startTime =
+            getDateTimeFromStr(res.startDate, res.startTime).getTime() / 1000;
+          rowData.endTime =
+            getDateTimeFromStr(res.endDate, res.endTime).getTime() / 1000;
+          const model: MaintainTransaction.Update = {
             maintenanceName: res.maintenanceName,
             maintenanceDescriptions: res.maintenanceDescriptions,
             maintenanceCost: res.maintenanceCost,
-            maintenaceStatus: rowData.maintenaceStatus,
+            maintenaceStatus: res.maintenaceStatus,
             startTime: rowData.startTime,
             endTime: rowData.endTime,
-            officeId: rowData.officeId
-          }
+            officeId: rowData.officeId,
+          };
           this._maintainSvc.update(rowData.id, model).subscribe({
             next: (result) => {
               this.fetchData();
             },
             error: (err) => {
-              console.log(err);
             },
           });
         }

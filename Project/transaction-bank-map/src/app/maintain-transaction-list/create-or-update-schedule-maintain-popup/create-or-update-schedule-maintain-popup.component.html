@@ -8,7 +8,12 @@
     <form class="flex flex-col w-full" [formGroup]="form">
       <mat-form-field class="flex justify-center">
         <mat-label>Mã PGD</mat-label>
-        <input matInput disabled [value]="form.controls.code.value" type="text">
+        <input
+          matInput
+          disabled
+          [value]="form.controls.code.value"
+          type="text"
+        />
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
@@ -17,8 +22,21 @@
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
+        <mat-label>Trạng thái</mat-label>
+        <mat-select matNativeControl formControlName="maintenaceStatus">
+          @for (w of status; track $index) {
+          <mat-option [value]="w.value">{{ w.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="flex justify-center">
         <mat-label>Mô tả</mat-label>
-        <textarea matInput placeholder="Nhập mô tả" formControlName="maintenanceDescriptions"></textarea>
+        <textarea
+          matInput
+          placeholder="Nhập mô tả"
+          formControlName="maintenanceDescriptions"
+        ></textarea>
       </mat-form-field>
 
       <mat-form-field class="flex justify-center">
@@ -30,16 +48,27 @@
       <div class="container flex justify-between mb-5">
         <mat-form-field appearance="fill" class="basis-2/5 mr-2">
           <mat-label>Thời gian bắt đầu</mat-label>
-          <input matInput placeholder="HH:MM" formControlName="startTime"
-            type="time" />
+          <input
+            matInput
+            placeholder="HH:MM"
+            formControlName="startTime"
+            type="time"
+          />
           <mat-hint>HH:MM (24-hour format)</mat-hint>
         </mat-form-field>
 
         <mat-form-field class="flex justify-center basis-3/5">
           <mat-label>Ngày bắt đầu</mat-label>
-          <input matInput [matDatepicker]="startDate" formControlName="startDate"/>
+          <input
+            matInput
+            [matDatepicker]="startDate"
+            formControlName="startDate"
+          />
           <mat-hint>MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matIconSuffix [for]="startDate"></mat-datepicker-toggle>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="startDate"
+          ></mat-datepicker-toggle>
           <mat-datepicker #startDate></mat-datepicker>
         </mat-form-field>
       </div>
@@ -48,7 +77,12 @@
       <div class="container flex justify-between">
         <mat-form-field appearance="fill" class="basis-2/5 mr-2">
           <mat-label>Thời gian kết thúc</mat-label>
-          <input matInput placeholder="HH:MM" formControlName="endTime" type="time" />
+          <input
+            matInput
+            placeholder="HH:MM"
+            formControlName="endTime"
+            type="time"
+          />
           <mat-hint>HH:MM (24-hour format)</mat-hint>
         </mat-form-field>
 
@@ -56,7 +90,10 @@
           <mat-label>Ngày kết thúc</mat-label>
           <input matInput [matDatepicker]="endDate" formControlName="endDate" />
           <mat-hint>MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matIconSuffix [for]="endDate"></mat-datepicker-toggle>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="endDate"
+          ></mat-datepicker-toggle>
           <mat-datepicker #endDate></mat-datepicker>
         </mat-form-field>
       </div>

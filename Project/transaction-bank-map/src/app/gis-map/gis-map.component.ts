@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewChecked,
   AfterViewInit,
   Component,
-  ElementRef,
   OnInit,
   signal,
   ViewChild,
@@ -14,8 +12,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import Map from '@arcgis/core/Map';
 import { MatButtonModule } from '@angular/material/button';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
-import Color from '@arcgis/core/Color';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { CreateOrUpdateBankBranchPopupComponent } from './create-or-update-bank-branch-popup/create-or-update-bank-branch-popup.component';
 import { PopUpType, SelectItem } from '../share/common';
 import { UserType } from '../user-management/user-management.model';
@@ -38,14 +35,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { on } from '@arcgis/core/core/reactiveUtils';
 import { MaintainTransactionListService } from '../maintain-transaction-list/maintain-transaction-list.service';
 import { CreateOrUpdateScheduleMaintainPopupComponent } from '../maintain-transaction-list/create-or-update-schedule-maintain-popup/create-or-update-schedule-maintain-popup.component';
-import { error, log } from 'console';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaintainTransaction } from '../maintain-transaction-list/maintain-transaction-list.model';
 import {
   SnackbarService,
   SnackbarStatus,
 } from '../share/ui/snackbar-notification/snackbar.service';
-import { filter } from 'rxjs';
 import Graphic from '@arcgis/core/Graphic';
 import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import Point from '@arcgis/core/geometry/Point';
@@ -85,9 +79,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   graphicsLayer = new GraphicsLayer();
   pointGraphicsLayer = new GraphicsLayer();
   locationLayer = new GraphicsLayer();
+  directionLayer = new GraphicsLayer();
   @ViewChild('mapViewNode', { static: true })
-  private readonly mapViewEl!: ElementRef;
-  private readonly dialogRef!: MatDialogRef<ConfirmComponent>;
   isAdmin = false;
   descriptionItems: SelectItem<string>[] = [
     { name: 'Ít', value: 'bg-blue-500' },
@@ -106,6 +99,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   wards = signal<TransactionOffice.Ward[]>([]);
   transactionOffices = signal<TransactionOffice.CreateOrUpdate[]>([]);
   yourLocation!: GisMap.APoint;
+  directionData!: GisMap.RedirectRequest;
   isShowRedirect: boolean = false;
 
   constructor(
@@ -115,11 +109,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     private readonly _ls: LocalStorageService,
     private readonly _transOffSvc: TransactionOfficeService,
     private readonly _maintainSvc: MaintainTransactionListService,
-    private readonly _snackbarSvc: SnackbarService
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this._ls.isExistToken();
+    console.log(this.isAdmin);
+
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);
     }
@@ -150,6 +145,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     map.add(this.graphicsLayer);
     map.add(this.pointGraphicsLayer);
     map.add(this.locationLayer);
+    map.add(this.directionLayer);
   }
 
   private handleMapClick(event: Point) {
@@ -201,11 +197,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       origin: `${this.yourLocation.latitude},${this.yourLocation.longitude}`,
       destination: `${destination.latitude},${destination.longitude}`,
     };
+    this.directionData = modelRequest;
     this._gisMapSvc.redirectToBank(modelRequest).subscribe({
       next: (resp) => {
         const streetLine = this._gisMapSvc.createLines(resp['data']);
+        this.directionLayer.removeAll();
         streetLine.forEach((tr: any) => {
-          this.graphicsLayer.add(this._gisMapSvc.createGraphic(tr));
+          this.directionLayer.add(this._gisMapSvc.createGraphic(tr));
         });
       },
       error: (err) => {},
@@ -216,14 +214,23 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this._transOffSvc
       .getPaging({ page: 1, pageSize: 9999 })
       .subscribe((resp) => {
-        let transOffices = resp.data.transactionOffices;
-        this.transactionOffices.set(resp.data.transactionOffices);
+        if (!resp.data) return;
 
-        if (!this.showClosedTransaction) {
-          transOffices = resp.data.transactionOffices.filter(
-            (i) => Number(i.officeStatus) !== TransactionOffice.Status.Closed
-          );
-        }
+        // Update year to show by control
+        resp.data.transactionOffices.forEach((trans) => {
+          const date = new Date(trans.createdAt * 1000);
+          trans.yearCreated = date.getFullYear();
+        });
+
+        this.transactionOffices.set(resp.data.transactionOffices);
+        let transOffices = resp.data.transactionOffices.filter(
+          (i) =>
+            (this.showClosedTransaction ||
+              (!this.showClosedTransaction &&
+                Number(i.officeStatus) !== TransactionOffice.Status.Closed)) &&
+            i.yearCreated === this.chooseYear
+        );
+
         this.pointGraphicsLayer.removeAll();
         const transPoint = this._gisMapSvc.createPoints(transOffices);
         transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
@@ -275,7 +282,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   onCloseTransaction(id: string): void {
     let transOffices = this.transactionOffices().find((i) => i.id === id);
     if (!transOffices) {
-      this._snackbarSvc.show(SnackbarStatus.NotFoundInfo);
       return;
     }
     const dialogRef = this._dialog.open(ConfirmComponent, {
@@ -292,11 +298,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         transOffices.officeStatus = TransactionOffice.Status.Closed.toString();
         this._transOffSvc.update(id, transOffices).subscribe({
           next: (result) => {
-            this._snackbarSvc.show(SnackbarStatus.UpdateSuccess);
             this.getAllTransactionOfficeAndCreatePoints();
           },
           error: (err) => {
-            this._snackbarSvc.show(SnackbarStatus.UpdateFailed);
           },
         });
       }
@@ -306,7 +310,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   onEditTrans(id: string): void {
     const rowData = this.transactionOffices().find((i) => i.id === id);
     if (!rowData) {
-      this._snackbarSvc.show(SnackbarStatus.NotFoundInfo);
       return;
     }
     const dialogRef = this._dialog.open(
@@ -334,11 +337,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
           this._transOffSvc.update(rowData.id, rowData).subscribe({
             next: (result) => {
-              this._snackbarSvc.show(SnackbarStatus.UpdateSuccess);
               this.getAllTransactionOfficeAndCreatePoints();
             },
             error: (err) => {
-              this._snackbarSvc.show(SnackbarStatus.UpdateFailed);
             },
           });
         }
@@ -365,11 +366,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
                   MaintainTransaction.MaintainStatus.Doing;
                 this._maintainSvc.create(value).subscribe({
                   next: (result) => {
-                    this._snackbarSvc.show(SnackbarStatus.AddSuccess);
                     this.getAllTransactionOfficeAndCreatePoints();
                   },
                   error: (err) => {
-                    this._snackbarSvc.show(SnackbarStatus.AddFailed);
                   },
                 });
               }
@@ -395,12 +394,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           // value.countEmployee;
           this._transOffSvc.create(value).subscribe({
             next: (result) => {
-              this._snackbarSvc.show(SnackbarStatus.AddSuccess);
               this.getAllTransactionOfficeAndCreatePoints();
             },
             error: (err) => {
               console.log(err);
-              this._snackbarSvc.show(SnackbarStatus.AddFailed);
             },
           });
         }
@@ -456,8 +453,31 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.getAllTransactionOfficeAndCreatePoints();
   }
 
-  onDirection() {
-    console.log('google map');
+  onDirection(isClose: boolean) {
+    if (isClose) {
+      this.directionLayer.removeAll();
+      this.isShowRedirect = false;
+    } else {
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${this.directionData.origin}&destination=${this.directionData.destination}`;
+      window.open(url, '_blank');
+    }
+  }
 
+  onChooseYearChange(year: any) {
+    console.log(year);
+    this.pointGraphicsLayer.removeAll();
+    let transOffices: TransactionOffice.CreateOrUpdate[];
+    transOffices = this.transactionOffices().filter(
+      (i) =>
+        (this.showClosedTransaction ||
+          (!this.showClosedTransaction &&
+            Number(i.officeStatus) !== TransactionOffice.Status.Closed)) &&
+        i.yearCreated === this.chooseYear
+    );
+    this.pointGraphicsLayer.removeAll();
+    const transPoint = this._gisMapSvc.createPoints(transOffices);
+    transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
+      this.pointGraphicsLayer.add(this._gisMapSvc.createGraphic(tr));
+    });
   }
 }

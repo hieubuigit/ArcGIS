@@ -37,7 +37,10 @@
   <div id="mapView" class="basis-10/12"></div>
   <div class="basis-2/12 border-l-2 p-2">
     <div class="description">
-      <div class="font-bold text-center">Số lượng khách hàng <br> giao dịch</div>
+      <div class="font-bold text-center">
+        Số lượng khách hàng <br />
+        giao dịch
+      </div>
       @for (i of descriptionItems; track $index) {
       <div class="flex justify-start p-2">
         <span class="size-5 rounded-full" [ngClass]="i.value"></span>
@@ -49,17 +52,25 @@
     <div class="control text-center pt-5">
       <div class="font-bold">{{ chooseYear }}</div>
       <mat-slider class="w-full" [max]="max" [min]="min" [step]="step">
-        <input matSliderThumb [(ngModel)]="chooseYear" #slider>
+        <input matSliderThumb [(ngModel)]="chooseYear" #slider (valueChange)="onChooseYearChange($event)" />
       </mat-slider>
       <section class="">
-        <mat-checkbox [(ngModel)]="showClosedTransaction" (change)="onShowClosed($event)">Hiển thị PGD đóng cửa</mat-checkbox>
+        <mat-checkbox [(ngModel)]="showClosedTransaction" (change)="onShowClosed($event)">Hiển thị PGD đóng
+          cửa</mat-checkbox>
       </section>
     </div>
   </div>
 </div>
 
 @if (isShowRedirect) {
-  <div class="absolute bottom-3 left-3 bg-blue-400 rounded-full w-12 h-11 pt-2 border border-solid text-center" (click)="onDirection()">
-    <mat-icon>location_on</mat-icon>
-  </div>
+<div
+  class="absolute bottom-14 left-3 bg-blue-400 hover:bg-blue-500 rounded-full w-12 h-11 pt-2 border border-solid text-center"
+  (click)="onDirection(false)">
+  <mat-icon>location_on</mat-icon>
+</div>
+<div
+  class="absolute bottom-3 left-3 bg-yellow-400 hover:bg-yellow-500 rounded-full w-12 h-11 pt-2 border border-solid text-center"
+  (click)="onDirection(true)">
+  <mat-icon>cancel</mat-icon>
+</div>
 }

@@ -9,6 +9,11 @@ export class SnackbarService {
 
   show(status: SnackbarStatus) {
     switch (status) {
+      case SnackbarStatus.LoadDataSuccess:
+        this._snackBar.open('Load dữ liệu thành công', 'Close', {
+          duration: 3000,
+        });
+        break;
       case SnackbarStatus.AddSuccess:
         this._snackBar.open('Thêm thành công', 'Close', {
           duration: 3000,
@@ -34,11 +39,17 @@ export class SnackbarService {
           duration: 3000,
         });
         break;
+      case SnackbarStatus.InternalError:
+        this._snackBar.open('Lỗi nội bộ', 'Close', {
+          duration: 3000,
+        });
+        break;
     }
   }
 }
 
 export enum SnackbarStatus {
+  LoadDataSuccess,
   AddSuccess,
   AddFailed,
   UpdateSuccess,
@@ -46,4 +57,5 @@ export enum SnackbarStatus {
   DeleteSuccess,
   DeleteFailed,
   NotFoundInfo,
+  InternalError,
 }

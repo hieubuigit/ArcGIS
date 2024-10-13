@@ -33,16 +33,17 @@ export const isAvailable = (value: any): boolean =>
 /**
  * Format datetime
  */
-export const formatDateTimeFromMilliSecond = (milliseconds: number) => {
+export const formatDateTimeFromMilliSecond = (milliseconds: number, isNeedSeconds: boolean = false) => {
   const date = new Date(milliseconds * 1000);
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const day = date.getDate().toString().padStart(2, '0');
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = isNeedSeconds ? date.getSeconds().toString().padStart(2, '0') : '00';
   return {
     date: `${year}-${month}-${day}`,
-    time: `${hours}:${minutes}`,
+    time: `${hours}:${minutes}:${seconds}`,
   };
 };
 

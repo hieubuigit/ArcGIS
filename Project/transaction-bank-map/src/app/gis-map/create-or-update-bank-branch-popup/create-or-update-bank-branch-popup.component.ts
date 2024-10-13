@@ -57,7 +57,7 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
     wardId: this._formBuilder.control<null | string>(null, [
       Validators.required,
     ]),
-    officeStatus: this._formBuilder.control<null | number>(null, [
+    officeStatus: this._formBuilder.control<null | number>(TransactionOffice.Status.Active, [
       Validators.required,
     ]),
     officeUptime: ['', [Validators.required]],
@@ -86,8 +86,6 @@ export class CreateOrUpdateBankBranchPopupComponent implements OnInit {
   ngOnInit(): void {
     this.fetchWardData();
     if (this.data) {
-      console.log(this.data);
-
       this.popupType = this.data.popupType;
       if (this.data.popupType === PopUpType.Add) {
         this.getCode();

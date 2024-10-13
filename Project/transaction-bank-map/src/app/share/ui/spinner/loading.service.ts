@@ -9,7 +9,7 @@ export class LoadingService {
   constructor() { }
 
   private activeRequests = 0;
-  private loadingSubject = new BehaviorSubject<boolean>(false);
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
   addRequest() {
