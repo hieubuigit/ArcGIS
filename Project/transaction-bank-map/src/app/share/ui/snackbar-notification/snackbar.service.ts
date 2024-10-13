@@ -44,6 +44,11 @@ export class SnackbarService {
           duration: 3000,
         });
         break;
+      case SnackbarStatus.BadRequest:
+        this._snackBar.open('⭕ Bad Request', 'Close', {
+          duration: 3000,
+        });
+        break;
     }
   }
 }
@@ -58,4 +63,5 @@ export enum SnackbarStatus {
   DeleteFailed,
   NotFoundInfo,
   InternalError,
+  BadRequest
 }

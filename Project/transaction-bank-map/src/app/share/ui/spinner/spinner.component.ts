@@ -28,9 +28,7 @@ export class SpinnerComponent {
   isLoading$ = true;
   constructor(private readonly loadingService: LoadingService) {
     this.loadingService.loading$.subscribe(res => {
-      setTimeout(() => {
-        this.isLoading$ = res;
-      }, 3000);
+      this.isLoading$ = res;
     });
   }
 }

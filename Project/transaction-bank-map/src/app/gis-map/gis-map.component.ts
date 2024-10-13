@@ -113,8 +113,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isAdmin = this._ls.isExistToken();
-    console.log("alo", this.isAdmin);
-
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);
     }
@@ -232,7 +230,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         );
 
         this.pointGraphicsLayer.removeAll();
-        const transPoint = this._gisMapSvc.createPoints(transOffices);
+        const transPoint = this._gisMapSvc.createPoints(transOffices, this.isAdmin);
         transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
           this.pointGraphicsLayer.add(this._gisMapSvc.createGraphic(tr));
         });
@@ -323,8 +321,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       .afterClosed()
       .subscribe((value: TransactionOffice.CreateOrUpdate) => {
         if (value) {
-          console.log(value);
-
           rowData.officeName = value.officeName;
           rowData.officeAddress = value.officeAddress;
           rowData.officeDescriptions = value.officeDescriptions;

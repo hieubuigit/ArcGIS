@@ -36,6 +36,9 @@ export class LoadingInterceptor implements HttpInterceptor {
               break
             case 500:
               this._snackbarSvc.show(SnackbarStatus.InternalError);
+              break
+            case 400:
+              this._snackbarSvc.show(SnackbarStatus.BadRequest);
               break;
             default:
               break;

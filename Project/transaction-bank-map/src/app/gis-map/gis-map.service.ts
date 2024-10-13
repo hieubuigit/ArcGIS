@@ -7,6 +7,8 @@ import { formatCurrency, formatDateTimeFromMilliSecond } from '../share/common';
 import { TransactionOffice } from '../transaction-office/transaction-office.model';
 import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import { environment } from '../../environment/environment';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import Point from '@arcgis/core/geometry/Point';
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +51,9 @@ export class GisMapService {
 
   redirectToBank(params: GisMap.RedirectRequest) {
     const prQuery = new HttpParams({ fromObject: { ...params } });
-    return this._http.get<any>(`${environment.apiUrl}/ward/map/direction`, {params: prQuery});
+    return this._http.get<any>(`${environment.apiUrl}/ward/map/direction`, {
+      params: prQuery,
+    });
   }
 
   createLines(data: any) {
@@ -68,7 +72,10 @@ export class GisMapService {
     ];
   }
 
-  createPoints(data: TransactionOffice.CreateOrUpdate[]) {
+  createPoints(
+    data: TransactionOffice.CreateOrUpdate[],
+    isAdmin: boolean = false
+  ) {
     let points: any = [];
     if (data.length > 0) {
       data.forEach((item) => {
@@ -79,8 +86,6 @@ export class GisMapService {
         const transOffStatus = TransactionOffice.transStatusInfo.find(
           (i) => i.value === Number(item.officeStatus)
         );
-
-        console.log(item);
 
         let imageStatus: string = 'assets/bank.png';
         if (Number(item.officeStatus) === TransactionOffice.Status.Maintain) {
@@ -122,14 +127,50 @@ export class GisMapService {
           Location: item.officeAddress,
           symbol: iconSymbol,
           attributes: attributePopup,
-          popupTemplate: this.createPointTemplate(item),
+          popupTemplate: this.createPointTemplate(item, isAdmin),
         });
       });
     }
     return points;
   }
 
-  createPointTemplate(item: TransactionOffice.CreateOrUpdate) {
+  createPointTemplate(
+    item: TransactionOffice.CreateOrUpdate,
+    isAdmin: boolean = true
+  ) {
+    const actions = [
+      {
+        id: 'close',
+        type: 'button',
+        title: 'Đóng PGD',
+        image: 'assets/close.png',
+        className: item.id,
+      },
+      {
+        id: 'edit',
+        type: 'button',
+        title: 'Sửa thông tin',
+        image: 'assets/pen.png',
+        className: item.id,
+      },
+      {
+        id: 'maintain',
+        type: 'button',
+        title: 'Lên lịch bảo trì',
+        image: 'assets/repair-service.png',
+        className: item.id,
+      },
+    ];
+    if (isAdmin) {
+      actions.push({
+        id: 'direction',
+        type: 'button',
+        title: 'Đến dây',
+        image: 'assets/gps.png',
+        className: ({ latitude: item.latitude, longitude: item.longitude } as Point).toString(),
+      });
+    }
+
     return {
       title: '<div style="font-weight:700;">{name}</div>',
       content: `
@@ -156,36 +197,7 @@ export class GisMapService {
         </div>
         </div>
       `,
-      actions: [
-        {
-          id: 'close',
-          type: 'button',
-          title: 'Đóng PGD',
-          image: 'assets/close.png',
-          className: item.id,
-        },
-        {
-          id: 'edit',
-          type: 'button',
-          title: 'Sửa thông tin',
-          image: 'assets/pen.png',
-          className: item.id,
-        },
-        {
-          id: 'maintain',
-          type: 'button',
-          title: 'Lên lịch bảo trì',
-          image: 'assets/repair-service.png',
-          className: item.id,
-        },
-        {
-          id: 'direction',
-          type: 'button',
-          title: 'Đến dây',
-          image: 'assets/gps.png',
-          className: {latitude: item.latitude, longitude: item.longitude},
-        }
-      ],
+      actions: actions,
     };
   }
 
@@ -223,5 +235,4 @@ export class GisMapService {
     });
     return transactionPoints;
   }
-
 }
