@@ -26,7 +26,7 @@ export namespace TransactionOffice {
     latitude: number;
     longitude: number;
     countEmployee: number;
-    countCustomer: number;
+    countCustomerNow: number;
     officeUptime: string;
     wardId: string;
     createdAt: number;

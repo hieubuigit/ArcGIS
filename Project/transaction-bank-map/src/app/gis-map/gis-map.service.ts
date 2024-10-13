@@ -80,7 +80,7 @@ export class GisMapService {
     if (data.length > 0) {
       data.forEach((item) => {
         if (item.ticket) {
-          item.countCustomer = item.ticket.countCustomer;
+          item.countCustomerNow = item.ticket.countCustomerNow;
         }
 
         const transOffStatus = TransactionOffice.transStatusInfo.find(
@@ -94,11 +94,11 @@ export class GisMapService {
           Number(item.officeStatus) === TransactionOffice.Status.Closed
         ) {
           imageStatus = 'assets/bank-black.png';
-        } else if (item.countCustomer <= 10) {
+        } else if (item.countCustomerNow <= 10) {
           imageStatus = 'assets/bank-green.png';
-        } else if (item.countCustomer > 10 && item.countCustomer < 20) {
+        } else if (item.countCustomerNow > 10 && item.countCustomerNow < 20) {
           imageStatus = 'assets/bank-orange.png';
-        } else if (item.countCustomer > 20) {
+        } else if (item.countCustomerNow > 20) {
           imageStatus = 'assets/bank-red.png';
         }
 
@@ -106,7 +106,7 @@ export class GisMapService {
           name: item.officeName,
           status: transOffStatus?.name ?? '',
           upTime: item.officeUptime,
-          customerQty: item.countCustomer ?? 0,
+          customerQty: item.countCustomerNow ?? 0,
           employeeQty: item.countEmployee ?? 0,
           totalCost: formatCurrency(item.officeCost, 'VN'),
           latestMaintain:
