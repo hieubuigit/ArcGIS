@@ -1,12 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { district1Geo, streets, transactionBankGeos } from '../share/geo-info';
+import { transactionBankGeos } from '../share/geo-info';
 import Graphic from '@arcgis/core/Graphic';
 import { GisMap } from './gis-map.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { formatCurrency, formatDateTimeFromMilliSecond } from '../share/common';
 import { TransactionOffice } from '../transaction-office/transaction-office.model';
 import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
-import Point from '@arcgis/core/geometry/Point';
 import { environment } from '../../environment/environment';
 
 @Injectable({
@@ -73,9 +72,15 @@ export class GisMapService {
     let points: any = [];
     if (data.length > 0) {
       data.forEach((item) => {
+        if (item.ticket) {
+          item.countCustomer = item.ticket.countCustomer;
+        }
+
         const transOffStatus = TransactionOffice.transStatusInfo.find(
           (i) => i.value === Number(item.officeStatus)
         );
+
+        console.log(item);
 
         let imageStatus: string = 'assets/bank.png';
         if (Number(item.officeStatus) === TransactionOffice.Status.Maintain) {

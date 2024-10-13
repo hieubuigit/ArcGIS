@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
   OnInit,
   signal,
@@ -43,7 +42,7 @@ import { MillisecondsToDatePipe } from '../share/pipes/milliseconds-to-date.pipe
   providers: [TransactionManagementService],
   templateUrl: './transaction-management.component.html',
 })
-export class TransactionManagementComponent implements OnInit, AfterViewInit {
+export class TransactionManagementComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = [
     'id',
@@ -69,8 +68,6 @@ export class TransactionManagementComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.fetchData();
   }
-
-  ngAfterViewInit(): void {}
 
   fetchData() {
     this._transSvc.getPaging(this.paging).subscribe({

@@ -15,7 +15,14 @@ export const routes: Routes = [
   },
   {
     path: 'guest-map',
-    loadComponent: () => import('./gis-map/gis-map.component').then(m => m.GisMapComponent),
+    loadComponent: () =>
+      import('./gis-map/gis-map.component').then((m) => m.GisMapComponent),
+  },
+  {
+    path: 'map',
+    canActivate: [userAuthenticationGuard],
+    loadComponent: () =>
+      import('./gis-map/gis-map.component').then((m) => m.GisMapComponent),
   },
   {
     path: 'admin',

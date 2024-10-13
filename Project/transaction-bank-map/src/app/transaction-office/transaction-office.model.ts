@@ -35,6 +35,7 @@ export namespace TransactionOffice {
     updatedBy: string;
     latestMaintain: number;
     yearCreated? : number;
+    ticket?: OnlyCustomerOffice;
   }
 
   export interface Ward {

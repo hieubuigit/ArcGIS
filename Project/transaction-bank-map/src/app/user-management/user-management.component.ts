@@ -54,7 +54,7 @@ import { MillisecondsToDatePipe } from '../share/pipes/milliseconds-to-date.pipe
   providers: [MatDialog, UserManagementService],
   templateUrl: './user-management.component.html',
 })
-export class UserManagementComponent implements OnInit, AfterViewInit {
+export class UserManagementComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   displayedColumns: string[] = columns;
@@ -78,9 +78,6 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     this.fetchData();
   }
 
-  ngAfterViewInit(): void {
-  }
-
   fetchData() {
     const queryParams = {
       ...this.paging,
@@ -92,8 +89,8 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
       next: (res) => {
         this.paging.totalPage = res.data.totalPage;
         this.dataSource.set(new MatTableDataSource(res?.data.users));
-        this.dataSource().paginator = this.paginator;
         this.dataSource().sort = this.sort;
+        this.dataSource().paginator = this.paginator;
       },
       error: (err) => {
         console.log(err);

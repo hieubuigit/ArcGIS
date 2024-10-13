@@ -25,6 +25,6 @@ export class LocalStorageService {
   }
 
   isExistToken() {
-    return isAvailable(this.getCurrentUser()?.accessToken ?? false);
+    return isAvailable(this.getCurrentUser()?.accessToken);
   }
 }

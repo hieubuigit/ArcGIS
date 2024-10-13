@@ -113,7 +113,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isAdmin = this._ls.isExistToken();
-    console.log(this.isAdmin);
+    console.log("alo", this.isAdmin);
 
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);

@@ -48,7 +48,7 @@ export class LoginComponent {
       next: (value) => {
         if (!value) return;
         this._lsStorageSvc.setCurrentUser(value.data);
-        this.router.navigate(['/']);
+        this.router.navigate(['/map']);
       },
       error: (err) => {
         this.error.set("Tài khoản và mật khẩu không chính xác!");

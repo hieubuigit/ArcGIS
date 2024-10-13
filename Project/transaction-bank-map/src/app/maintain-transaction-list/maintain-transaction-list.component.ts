@@ -1,6 +1,5 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
   OnInit,
   signal,
@@ -52,7 +51,7 @@ import { SpinnerComponent } from '../share/ui/spinner/spinner.component';
   providers: [MaintainTransactionListService],
   templateUrl: './maintain-transaction-list.component.html',
 })
-export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
+export class MaintainTransactionListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = [
     'code',
@@ -83,11 +82,6 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
     private readonly _maintainSvc: MaintainTransactionListService,
   ) {}
 
-  ngAfterViewInit(): void {
-    this.dataSource().paginator = this.paginator;
-    this.dataSource().sort = this.sort;
-  }
-
   ngOnInit(): void {
     this.fetchData();
   }
@@ -98,6 +92,8 @@ export class MaintainTransactionListComponent implements OnInit, AfterViewInit {
       next: (resp) => {
         this.dataSource.set(new MatTableDataSource(resp.data.maintenances));
         this.isLoadingResults = false;
+        this.dataSource().paginator = this.paginator;
+        this.dataSource().sort = this.sort;
       },
       error: (err) => {
         this.isLoadingResults = false;
