@@ -70,7 +70,7 @@
     >
       Huỷ
     </button>
-    <button mat-flat-button (click)="onSave()">
+    <button mat-flat-button (click)="onSave()" [disabled]="form.invalid">
       @if(popupType === popupTypes.Add) { Lưu } @else { Cập Nhật }
     </button>
   </div>

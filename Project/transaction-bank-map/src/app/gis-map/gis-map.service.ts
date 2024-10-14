@@ -7,8 +7,6 @@ import { formatCurrency, formatDateTimeFromMilliSecond } from '../share/common';
 import { TransactionOffice } from '../transaction-office/transaction-office.model';
 import PictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import { environment } from '../../environment/environment';
-import { Action } from 'rxjs/internal/scheduler/Action';
-import Point from '@arcgis/core/geometry/Point';
 
 @Injectable({
   providedIn: 'root',
@@ -95,7 +93,7 @@ export class GisMapService {
         ) {
           imageStatus = 'assets/bank-black.png';
         } else if (item.countCustomerNow <= 10) {
-          imageStatus = 'assets/bank-green.png';
+          imageStatus = 'assets/bank-blue.png';
         } else if (item.countCustomerNow > 10 && item.countCustomerNow < 20) {
           imageStatus = 'assets/bank-orange.png';
         } else if (item.countCustomerNow > 20) {
@@ -167,9 +165,10 @@ export class GisMapService {
           type: 'button',
           title: 'Đến dây',
           image: 'assets/gps.png',
-          className: (
-            { latitude: item.latitude, longitude: item.longitude } as Point
-          ).toString(),
+          className: JSON.stringify({
+            latitude: item.latitude,
+            longitude: item.longitude,
+          }),
         },
       ];
     } else {
@@ -179,17 +178,16 @@ export class GisMapService {
           type: 'button',
           title: 'Đến dây',
           image: 'assets/gps.png',
-          className: (
-            { latitude: item.latitude, longitude: item.longitude } as Point
-          ).toString(),
+          className: JSON.stringify({
+            latitude: item.latitude,
+            longitude: item.longitude,
+          }),
         },
       ];
     }
 
-    return {
-      title: '<div style="font-weight:700;">{name}</div>',
-      content: `
-        <div class="container">
+    let adminContentHtml = `
+      <div class="container">
         <div class="flex flex-col items-start">
           <div class="field">
             <strong>Trạng thái:</strong> <span>{status}</span>
@@ -210,8 +208,28 @@ export class GisMapService {
             <strong>Lần bảo trì gần nhất: </strong> <span>{latestMaintain}</span>
           </div>
         </div>
+      </div>
+    `;
+
+    let guestContentHTML = `
+        <div class="container">
+        <div class="flex flex-col items-start">
+          <div class="field">
+            <strong>Trạng thái:</strong> <span>{status}</span>
+          </div>
+          <div class="field">
+            <strong>Thời gian hoạt động:</strong> <span>{upTime}</span>
+          </div>
+          <div class="field">
+            <strong>Số lượng khách hàng: </strong> <span>{customerQty}</span>
+          </div>
         </div>
-      `,
+      </div>
+    `;
+
+    return {
+      title: '<div style="font-weight:700;">{name}</div>',
+      content: isAdmin ? adminContentHtml : guestContentHTML,
       actions: actions,
     };
   }
