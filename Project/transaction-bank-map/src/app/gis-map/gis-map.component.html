@@ -2,7 +2,7 @@
   <div class="text-2xl font-bold text-white">
     Quản Lý PGD Ngân Hàng Vietcombank
   </div>
-  @if (isAdmin) {
+  @if (userType != userTypes.Guest) {
   <div class="buttons flex justify-around">
     <button
       class="mx-1"
@@ -63,19 +63,24 @@
   <div id="mapView" class="basis-10/12"></div>
   <div class="basis-2/12 border-l-2 p-2">
     <div class="description">
-      <div class="font-bold text-center">
+      <div class="font-bold text-center text-green-600">
         Số lượng khách hàng <br />
         giao dịch
       </div>
       @for (i of descriptionItems; track $index) {
-      <div class="flex justify-start p-2">
-        <span class="size-5 rounded-full" [ngClass]="i.value"></span>
-        <span class="pl-5">{{ i.name }} </span>
+      <div class="flex justify-start items-center p-2">
+        <img [src]="i.value[0]" alt="Quantity" class="size-10" />
+        <span class="pl-2">
+          {{ i.name }}
+          @if(i.value.length === 2) {
+          {{ i.value[1] }}
+          }
+        </span>
       </div>
       }
     </div>
 
-    @if (isAdmin) {
+    @if (userType != userTypes.Guest) {
     <mat-divider></mat-divider>
     <div class="control text-center pt-5">
       <div class="font-bold">{{ chooseYear }}</div>

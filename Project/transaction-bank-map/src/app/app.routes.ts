@@ -6,6 +6,7 @@ import { MaintainTransactionListComponent } from './maintain-transaction-list/ma
 import { UserManagementComponent } from './user-management/user-management.component';
 import { TransactionManagementComponent } from './transaction-management/transaction-management.component';
 import { userAuthenticationGuard } from './share/authentication/user-authentication.guard';
+import { roles } from './share/authentication/roles.guard';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,7 @@ export const routes: Routes = [
   },
   {
     path: 'guest-map',
+    canActivate: [roles],
     loadComponent: () =>
       import('./gis-map/gis-map.component').then((m) => m.GisMapComponent),
   },

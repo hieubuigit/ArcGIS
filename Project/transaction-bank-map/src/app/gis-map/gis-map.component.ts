@@ -73,21 +73,20 @@ import { GisMap } from './gis-map.model';
   styleUrl: './gis-map.component.scss',
 })
 export class GisMapComponent implements OnInit, AfterViewInit {
-  userType: UserType = UserType.Admin;
   userTypes = UserType;
+  userType: UserType = UserType.Guest;
   view!: MapView;
   graphicsLayer = new GraphicsLayer();
   pointGraphicsLayer = new GraphicsLayer();
   locationLayer = new GraphicsLayer();
   directionLayer = new GraphicsLayer();
   @ViewChild('mapViewNode', { static: true })
-  isAdmin = false;
-  descriptionItems: SelectItem<string>[] = [
-    { name: 'Ít', value: 'bg-blue-500' },
-    { name: 'Vừa', value: 'bg-orange-500' },
-    { name: 'Đông đảo', value: 'bg-red-500' },
-    { name: 'Bảo trì', value: 'bg-gray-500' },
-    { name: 'Đóng cửa', value: 'bg-black' },
+  descriptionItems: SelectItem<string[]>[] = [
+    { name: 'Ít', value: ['assets/bank-blue.png', '(< 10 người)']},
+    { name: 'Vừa', value: ['assets/bank-orange.png', '(10 - 20 người)']},
+    { name: 'Đông đảo', value: ['assets/bank-red.png', '(> 20 người)']},
+    { name: 'Bảo trì', value: ['assets/bank-gray.png'] },
+    { name: 'Đóng cửa', value: ['assets/bank-black.png'] },
   ];
 
   year: number[] = [];
@@ -112,7 +111,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.isAdmin = this._ls.isExistToken();
+    const token = this._ls.getCurrentUser();
+    if (token?.accessToken) {
+      this.userType = Number(token.user.role) as UserType;
+    }
+
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);
     }
@@ -226,11 +229,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             (this.showClosedTransaction ||
               (!this.showClosedTransaction &&
                 Number(i.officeStatus) !== TransactionOffice.Status.Closed)) &&
-            i.yearCreated === this.chooseYear
+            (i.yearCreated ?? 1000) <= this.chooseYear
         );
 
         this.pointGraphicsLayer.removeAll();
-        const transPoint = this._gisMapSvc.createPoints(transOffices, this.isAdmin);
+        const transPoint = this._gisMapSvc.createPoints(transOffices, this.userType != this.userTypes.Guest);
         transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
           this.pointGraphicsLayer.add(this._gisMapSvc.createGraphic(tr));
         });
@@ -268,7 +271,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               this.onAddMaintain(event.action.className);
               break;
             case 'direction':
-              this.getStreet(event.action.className as Point);
+              this.getStreet(JSON.parse(event.action.className) as Point);
               this.isShowRedirect = true;
               break;
           }
@@ -294,12 +297,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((isAccept) => {
       if (isAccept && transOffices) {
         transOffices.officeStatus = TransactionOffice.Status.Closed.toString();
+        console.log(transOffices);
+
         this._transOffSvc.update(id, transOffices).subscribe({
           next: (result) => {
             this.getAllTransactionOfficeAndCreatePoints();
           },
-          error: (err) => {
-          },
+          error: (err) => { },
         });
       }
     });
@@ -468,7 +472,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         (this.showClosedTransaction ||
           (!this.showClosedTransaction &&
             Number(i.officeStatus) !== TransactionOffice.Status.Closed)) &&
-        i.yearCreated === this.chooseYear
+        (i.yearCreated ?? 1000) <= this.chooseYear
     );
     this.pointGraphicsLayer.removeAll();
     const transPoint = this._gisMapSvc.createPoints(transOffices);
