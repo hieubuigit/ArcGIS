@@ -46,9 +46,9 @@ export class TransactionManagementComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = [
     'id',
-    'name',
-    'totalUserPerDay',
-    'totalUserNow',
+    'officeName',
+    'countCustomer',
+    'countCustomerNow',
     'createdAt',
     'updatedAt',
   ];

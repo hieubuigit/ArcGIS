@@ -72,7 +72,7 @@ export class GisMapService {
 
   createPoints(
     data: TransactionOffice.CreateOrUpdate[],
-    isAdmin: boolean = false
+    isLogged: boolean = false
   ) {
     let points: any = [];
     if (data.length > 0) {
@@ -107,8 +107,7 @@ export class GisMapService {
           customerQty: item.countCustomerNow ?? 0,
           employeeQty: item.countEmployee ?? 0,
           totalCost: formatCurrency(item.officeCost, 'VN'),
-          latestMaintain:
-            formatDateTimeFromMilliSecond(item.latestMaintain).date ?? '',
+          latestMaintain: item.latestMaintain ? (formatDateTimeFromMilliSecond(item.latestMaintain).date ?? '') : ""
         };
 
         const iconSymbol = new PictureMarkerSymbol({
@@ -125,7 +124,7 @@ export class GisMapService {
           Location: item.officeAddress,
           symbol: iconSymbol,
           attributes: attributePopup,
-          popupTemplate: this.createPointTemplate(item, isAdmin),
+          popupTemplate: this.createPointTemplate(item, isLogged),
         });
       });
     }
@@ -134,10 +133,10 @@ export class GisMapService {
 
   createPointTemplate(
     item: TransactionOffice.CreateOrUpdate,
-    isAdmin: boolean = true
+    isLogged: boolean = true
   ) {
     let actions: any = [];
-    if (isAdmin) {
+    if (isLogged) {
       actions = [
         {
           id: 'close',
@@ -159,16 +158,6 @@ export class GisMapService {
           title: 'Lên lịch bảo trì',
           image: 'assets/repair-service.png',
           className: item.id,
-        },
-        {
-          id: 'direction',
-          type: 'button',
-          title: 'Đến dây',
-          image: 'assets/gps.png',
-          className: JSON.stringify({
-            latitude: item.latitude,
-            longitude: item.longitude,
-          }),
         },
       ];
     } else {
@@ -229,7 +218,7 @@ export class GisMapService {
 
     return {
       title: '<div style="font-weight:700;">{name}</div>',
-      content: isAdmin ? adminContentHtml : guestContentHTML,
+      content: isLogged ? adminContentHtml : guestContentHTML,
       actions: actions,
     };
   }

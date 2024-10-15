@@ -81,13 +81,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   locationLayer = new GraphicsLayer();
   directionLayer = new GraphicsLayer();
   @ViewChild('mapViewNode', { static: true })
-  descriptionItems: SelectItem<string[]>[] = [
-    { name: 'Ít', value: ['assets/bank-blue.png', '(< 10 người)']},
-    { name: 'Vừa', value: ['assets/bank-orange.png', '(10 - 20 người)']},
-    { name: 'Đông đảo', value: ['assets/bank-red.png', '(> 20 người)']},
-    { name: 'Bảo trì', value: ['assets/bank-gray.png'] },
-    { name: 'Đóng cửa', value: ['assets/bank-black.png'] },
-  ];
+  descriptionItems: SelectItem<string[]>[] = [];
 
   year: number[] = [];
   chooseYear = new Date().getFullYear();
@@ -107,7 +101,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     private readonly _gisMapSvc: GisMapService,
     private readonly _ls: LocalStorageService,
     private readonly _transOffSvc: TransactionOfficeService,
-    private readonly _maintainSvc: MaintainTransactionListService,
+    private readonly _maintainSvc: MaintainTransactionListService
   ) {}
 
   ngOnInit(): void {
@@ -115,6 +109,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     if (token?.accessToken) {
       this.userType = Number(token.user.role) as UserType;
     }
+
+    this.descriptionItems = [
+      { name: 'Ít', value: ['assets/bank-blue.png', '(< 10 người)'] },
+      { name: 'Vừa', value: ['assets/bank-orange.png', '(10 - 20 người)'] },
+      { name: 'Đông đảo', value: ['assets/bank-red.png', '(> 20 người)'] },
+      { name: 'Bảo trì', value: ['assets/bank-gray.png'] },
+      { name: 'Đóng cửa', value: ['assets/bank-black.png'] },
+    ];
 
     for (let index = this.min; index < this.max; index++) {
       this.year.push(index);
@@ -233,10 +235,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         );
 
         this.pointGraphicsLayer.removeAll();
-        const transPoint = this._gisMapSvc.createPoints(transOffices, this.userType != this.userTypes.Guest);
+        const transPoint = this._gisMapSvc.createPoints(
+          transOffices,
+          this.userType != this.userTypes.Guest
+        );
         transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
           this.pointGraphicsLayer.add(this._gisMapSvc.createGraphic(tr));
         });
+        this.view.popup.close();
       });
   }
 
@@ -303,7 +309,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           next: (result) => {
             this.getAllTransactionOfficeAndCreatePoints();
           },
-          error: (err) => { },
+          error: (err) => {},
         });
       }
     });
@@ -339,8 +345,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             next: (result) => {
               this.getAllTransactionOfficeAndCreatePoints();
             },
-            error: (err) => {
-            },
+            error: (err) => {},
           });
         }
       });
@@ -368,8 +373,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
                   next: (result) => {
                     this.getAllTransactionOfficeAndCreatePoints();
                   },
-                  error: (err) => {
-                  },
+                  error: (err) => {},
                 });
               }
             });

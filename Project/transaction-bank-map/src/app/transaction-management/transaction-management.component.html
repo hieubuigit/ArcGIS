@@ -26,34 +26,34 @@
 <div class="mx-2 border-2 border-green-500 border-solid">
   <table mat-table [dataSource]="dataSource()" sticky="true" matSort>
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="capitalize">Số thứ tự</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Số thứ tự</th>
       <td mat-cell *matCellDef="let el; let i = index">{{ i + 1}}</td>
     </ng-container>
 
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="capitalize">Tên Phòng Giao Dịch</th>
+    <ng-container matColumnDef="officeName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Tên Phòng Giao Dịch</th>
       <td mat-cell *matCellDef="let el">{{ el.transactionOffice.officeName }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="totalUserPerDay">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="capitalize">Tổng user giao dịch trong ngày</th>
+    <ng-container matColumnDef="countCustomer">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Tổng user giao dịch trong ngày</th>
       <td mat-cell *matCellDef="let el">{{ el.countCustomer }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="totalUserNow">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="capitalize">Tổng user giao dịch hiện tại</th>
+    <ng-container matColumnDef="countCustomerNow">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Tổng user giao dịch hiện tại</th>
       <td mat-cell *matCellDef="let el">{{ el.countCustomerNow }}</td>
     </ng-container>
 
     <ng-container matColumnDef="createdAt">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="capitalize">Ngày tạo</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Ngày tạo</th>
       <td mat-cell *matCellDef="let el">
         {{ el.createdAt | millisecondsToDate}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="updatedAt">
-      <th mat-header-cell *matHeaderCellDef class="capitalize">Ngày cập nhật</th>
+      <th mat-header-cell *matHeaderCellDef >Ngày cập nhật</th>
       <td mat-cell *matCellDef="let el">
         {{ el.updatedAt | millisecondsToDate }}
       </td>
