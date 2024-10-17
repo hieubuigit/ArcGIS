@@ -9,6 +9,9 @@ import { UserAuthenticationService } from '../user-authentication.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocalStorageService } from '../../share/local-storage/local-storage.service';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
+import { PopUpType } from '../../share/common';
 
 @Component({
   selector: 'app-login',
@@ -38,8 +41,8 @@ export class LoginComponent {
     private readonly router: Router,
     private readonly _userAuth: UserAuthenticationService,
     private readonly _lsStorageSvc: LocalStorageService,
-  ) {
-  }
+    private readonly _dialog: MatDialog
+  ) {}
 
   onLogin() {
     const { username, password } = this.form.getRawValue();
@@ -51,8 +54,15 @@ export class LoginComponent {
         this.router.navigate(['/map']);
       },
       error: (err) => {
-        this.error.set("Tài khoản và mật khẩu không chính xác!");
+        this.error.set('Tài khoản và mật khẩu không chính xác!');
       },
+    });
+  }
+
+  onForgotPassword() {
+    const dialogRef = this._dialog.open(ForgotPasswordComponent, {
+      width: '700px',
+      data: { popupType: PopUpType.Add },
     });
   }
 }

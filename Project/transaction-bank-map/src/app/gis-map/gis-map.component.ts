@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateOrUpdateBankBranchPopupComponent } from './create-or-update-bank-branch-popup/create-or-update-bank-branch-popup.component';
-import { PopUpType, SelectItem } from '../share/common';
+import { getDateTimeFromStr, PopUpType, SelectItem } from '../share/common';
 import { UserType } from '../user-management/user-management.model';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmComponent } from '../share/confirm.component';
@@ -228,6 +228,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.transactionOffices.set(resp.data.transactionOffices);
         let transOffices = resp.data.transactionOffices.filter(
           (i) =>
+            this.userType === UserType.Guest ||
             (this.showClosedTransaction ||
               (!this.showClosedTransaction &&
                 Number(i.officeStatus) !== TransactionOffice.Status.Closed)) &&
@@ -237,7 +238,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.pointGraphicsLayer.removeAll();
         const transPoint = this._gisMapSvc.createPoints(
           transOffices,
-          this.userType != this.userTypes.Guest
+          this.userType !== this.userTypes.Guest
         );
         transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
           this.pointGraphicsLayer.add(this._gisMapSvc.createGraphic(tr));
@@ -364,11 +365,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           );
           dialogRef
             .afterClosed()
-            .subscribe((value: MaintainTransaction.Response) => {
+            .subscribe((value) => {
               if (value) {
+                const startTime = getDateTimeFromStr(value.startDate, value.startTime).getTime() / 1000;
+                const endTime = getDateTimeFromStr(value.endDate, value.endTime).getTime() / 1000
+                value.startTime = startTime;
+                value.endTime = endTime;
                 value.officeId = id;
-                value.maintenaceStatus =
-                  MaintainTransaction.MaintainStatus.Doing;
+                value.maintenaceStatus = MaintainTransaction.MaintainStatus.Doing;
                 this._maintainSvc.create(value).subscribe({
                   next: (result) => {
                     this.getAllTransactionOfficeAndCreatePoints();
@@ -479,7 +483,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         (i.yearCreated ?? 1000) <= this.chooseYear
     );
     this.pointGraphicsLayer.removeAll();
-    const transPoint = this._gisMapSvc.createPoints(transOffices);
+    const transPoint = this._gisMapSvc.createPoints(transOffices, this.userType !== UserType.Guest);
     transPoint.forEach((tr: TransactionOffice.CreateOrUpdate) => {
       this.pointGraphicsLayer.add(this._gisMapSvc.createGraphic(tr));
     });

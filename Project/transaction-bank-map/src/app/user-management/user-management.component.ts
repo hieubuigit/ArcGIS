@@ -161,7 +161,7 @@ export class UserManagementComponent implements OnInit {
     const dialogRef = this._dialog.open(ConfirmComponent, {
       width: '700px',
       data: {
-        title: `Bạn có chắc chắn muốn xóa User ${el.userId} không? `,
+        title: `Bạn có chắc chắn muốn xóa User ${el.fullName} không? `,
         content:
           'Hành động này không thể hoàn tác. Use sẽ bị xóa ra khỏi hệ thống vĩnh viễn.',
         popupType: PopUpType.Delete,

@@ -28,7 +28,7 @@
         @if (error()) {
         <p class="text-red-500 text-center">{{ error() }}</p>
         }
-        <a [routerLink]="['/forgot-password']" class="self-end text-green-500 hover:text-green-600 mb-5">
+        <a (click)="onForgotPassword()" class="self-end text-green-500 hover:text-green-600 mb-5">
           Quên mật khẩu
         </a>
       </div>
